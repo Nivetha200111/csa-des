@@ -28,7 +28,9 @@ html,
 body,
 #root {
   min-height: 100%;
-  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -54,8 +56,11 @@ button {
   --cursor-x: 72%;
   --cursor-y: 18%;
   position: relative;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   padding: 32px 24px 48px;
   background:
     radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(74, 226, 200, 0.14), transparent 18%),
@@ -115,6 +120,7 @@ button {
 .dashboard {
   position: relative;
   z-index: 1;
+  width: 100%;
   max-width: 1520px;
   margin: 0 auto;
   display: grid;
@@ -238,6 +244,7 @@ button {
   margin: 0;
   font-family: "Sora", "Space Grotesk", sans-serif;
   letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
 }
 
 .hero-copy h1 {
@@ -475,6 +482,15 @@ button {
   display: flex;
   justify-content: space-between;
   gap: 16px;
+}
+
+.day-card__header > :first-child,
+.focus-header > :first-child,
+.notes-header > :first-child,
+.questions-header > :first-child,
+.question-card__header > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .day-card__title {
@@ -916,6 +932,7 @@ button {
   font-family: "Sora", "Space Grotesk", sans-serif;
   font-size: 1.15rem;
   letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
 }
 
 .question-card__prompt {
@@ -1157,21 +1174,11 @@ button {
   .bar-chart {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-}
-
-@media (max-width: 720px) {
-  .app-shell {
-    padding: 18px 14px 40px;
-  }
-
-  .panel {
-    padding: 20px;
-    border-radius: 26px;
-  }
 
   .focus-header,
   .notes-header,
   .questions-header,
+  .question-card__header,
   .day-card__header,
   .day-card__meta {
     flex-direction: column;
@@ -1183,6 +1190,17 @@ button {
     min-width: 0;
     aspect-ratio: auto;
     padding: 18px;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 18px 14px 40px;
+  }
+
+  .panel {
+    padding: 20px;
+    border-radius: 26px;
   }
 
   .scores-grid,
