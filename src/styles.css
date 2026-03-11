@@ -167,6 +167,11 @@ button {
   gap: 24px;
 }
 
+.flashcards-controls {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 .flashcards-hero__copy {
   display: grid;
   gap: 16px;
@@ -212,6 +217,32 @@ button {
 .flashcards-stat__value {
   font-family: "Sora", "Space Grotesk", sans-serif;
   font-size: 1.4rem;
+}
+
+.flashcards-mode-switch {
+  width: fit-content;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.flashcards-mode-switch__button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: transparent;
+  color: var(--muted-strong);
+  font-weight: 700;
+}
+
+.flashcards-mode-switch__button--active {
+  background: linear-gradient(135deg, rgba(248, 200, 95, 0.2), rgba(74, 226, 200, 0.16));
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .flashcards-toolbar {
@@ -267,6 +298,10 @@ button {
   justify-content: flex-end;
 }
 
+.flashcards-actions--stack {
+  justify-content: flex-start;
+}
+
 .flashcards-action {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
@@ -283,11 +318,14 @@ button {
 
 .flashcards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
+  align-items: stretch;
 }
 
 .flashcard {
+  display: block;
+  position: relative;
   width: 100%;
   min-height: 320px;
   border: 0;
@@ -295,12 +333,15 @@ button {
   background: transparent;
   text-align: left;
   perspective: 1600px;
+  min-width: 0;
 }
 
 .flashcard__inner {
   position: relative;
+  display: block;
   width: 100%;
   min-height: 320px;
+  height: 100%;
   transform-style: preserve-3d;
   transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -323,6 +364,7 @@ button {
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 24px 60px rgba(1, 7, 15, 0.24);
   overflow: hidden;
+  min-height: 100%;
 }
 
 .flashcard__face::before {
@@ -392,6 +434,268 @@ button {
   gap: 8px;
 }
 
+.anki-plan {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.anki-plan__day,
+.anki-stat-card,
+.anki-queue__item,
+.anki-session__empty,
+.anki-sidebar__empty {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.anki-plan__day {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 24px;
+  text-align: left;
+  color: var(--text);
+}
+
+.anki-plan__day--active {
+  border-color: rgba(74, 226, 200, 0.38);
+  background:
+    radial-gradient(circle at top right, rgba(74, 226, 200, 0.12), transparent 38%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 20px 48px rgba(1, 7, 15, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.anki-plan__day-title,
+.anki-plan__day-count {
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.anki-plan__day-title {
+  color: rgba(248, 200, 95, 0.92);
+}
+
+.anki-plan__day-focus {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.anki-plan__day-detail,
+.anki-sidebar__empty,
+.anki-review-card__prompt,
+.anki-review-card__answer {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.anki-plan__day-count {
+  color: var(--muted-strong);
+}
+
+.anki-sprint-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.anki-session {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.anki-session__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.anki-session__header h2 {
+  margin: 0;
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.anki-session__header p {
+  margin: 10px 0 0;
+  max-width: 48ch;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.anki-session__pill {
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(248, 200, 95, 0.08);
+  border: 1px solid rgba(248, 200, 95, 0.16);
+  color: #f9d88e;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.anki-review-card {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(74, 226, 200, 0.16);
+  background:
+    radial-gradient(circle at top left, rgba(74, 226, 200, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(10, 23, 37, 0.98), rgba(5, 14, 24, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 56px rgba(1, 7, 15, 0.28);
+}
+
+.anki-review-card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.anki-review-card__term {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+}
+
+.anki-review-card__prompt {
+  font-size: 1rem;
+}
+
+.anki-review-card__answer {
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted-strong);
+  font-size: 1rem;
+}
+
+.anki-review-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.anki-rating-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.anki-rating {
+  border: 0;
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: #04101d;
+  font-weight: 800;
+}
+
+.anki-rating--again {
+  background: linear-gradient(135deg, #ff8e76, #ff6a6a);
+}
+
+.anki-rating--hard {
+  background: linear-gradient(135deg, #f8c85f, #ffad5a);
+}
+
+.anki-rating--good {
+  background: linear-gradient(135deg, #87d8ff, #79a8ff);
+}
+
+.anki-rating--easy {
+  background: linear-gradient(135deg, #7df0d3, #4ae2c8);
+}
+
+.anki-session__empty {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border-radius: 24px;
+}
+
+.anki-sidebar {
+  display: grid;
+  gap: 18px;
+}
+
+.anki-sidebar__section {
+  display: grid;
+  gap: 14px;
+}
+
+.anki-section-title {
+  display: grid;
+  gap: 8px;
+}
+
+.anki-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.anki-stat-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 22px;
+}
+
+.anki-stat-card span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.anki-stat-card strong {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.35rem;
+}
+
+.anki-queue {
+  display: grid;
+  gap: 10px;
+}
+
+.anki-queue__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 20px;
+}
+
+.anki-queue__item span {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.anki-queue__item small {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.82fr) minmax(320px, 0.9fr);
@@ -418,6 +722,177 @@ button {
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   gap: 24px;
   min-width: 0;
+}
+
+.panel--syllabus,
+.panel--impact,
+.panel--lab-guide {
+  display: grid;
+  gap: 20px;
+}
+
+.syllabus-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.syllabus-domain,
+.impact-lab,
+.lab-guide-card {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.syllabus-domain {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+}
+
+.syllabus-domain__header,
+.lab-guide-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.syllabus-domain__eyebrow,
+.lab-guide-card__eyebrow,
+.impact-lab__eyebrow {
+  color: rgba(248, 200, 95, 0.92);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.syllabus-domain__header h3,
+.lab-guide-card__header h3 {
+  margin: 8px 0 0;
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.18rem;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.syllabus-domain__weight,
+.lab-guide-card__duration {
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid rgba(74, 226, 200, 0.16);
+  background: rgba(74, 226, 200, 0.08);
+  color: #bdf7ec;
+  font-weight: 700;
+}
+
+.syllabus-domain__summary,
+.lab-guide-card__goal {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.syllabus-domain__labs {
+  display: grid;
+  gap: 10px;
+}
+
+.syllabus-domain__lab {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(4, 12, 22, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.syllabus-domain__lab span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.syllabus-domain__lab strong {
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.impact-labs {
+  display: grid;
+  gap: 12px;
+}
+
+.impact-lab {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 22px;
+}
+
+.impact-lab__title {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+
+.impact-lab__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.impact-lab__meta span {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted-strong);
+  font-size: 0.84rem;
+}
+
+.lab-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.lab-guide-card {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 26px;
+  min-width: 0;
+}
+
+.lab-guide-card__tasks {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: var(--muted-strong);
+  line-height: 1.6;
+}
+
+.lab-guide-card__tasks li::marker {
+  color: #f9d88e;
+}
+
+.lab-guide-card__concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lab-guide-card__concept {
+  border-radius: 999px;
+  padding: 9px 13px;
+  background: rgba(248, 200, 95, 0.08);
+  border: 1px solid rgba(248, 200, 95, 0.16);
+  color: #f9d88e;
+  font-size: 0.84rem;
 }
 
 .panel {
@@ -711,6 +1186,22 @@ button {
   margin-top: 20px;
 }
 
+.plan-footnote {
+  margin-top: 18px;
+  border-radius: 22px;
+  padding: 16px 18px;
+  border: 1px solid rgba(74, 226, 200, 0.14);
+  background:
+    linear-gradient(135deg, rgba(74, 226, 200, 0.1), transparent 42%),
+    rgba(255, 255, 255, 0.03);
+  color: var(--muted-strong);
+  line-height: 1.6;
+}
+
+.plan-footnote strong {
+  color: var(--text);
+}
+
 .day-card {
   position: relative;
   isolation: isolate;
@@ -827,6 +1318,22 @@ button {
   margin-top: 4px;
 }
 
+.focus-domains {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.focus-domains span {
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid rgba(121, 168, 255, 0.16);
+  background: rgba(121, 168, 255, 0.08);
+  color: #bed1ff;
+  font-size: 0.88rem;
+}
+
 .focus-meter {
   margin-top: 18px;
 }
@@ -838,6 +1345,29 @@ button {
   margin-bottom: 10px;
   color: var(--muted-strong);
   font-size: 0.92rem;
+}
+
+.focus-deliverable {
+  margin-top: 18px;
+  border-radius: 24px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.focus-deliverable__label {
+  color: rgba(248, 200, 95, 0.92);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.focus-deliverable p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .task-list {
@@ -1403,7 +1933,13 @@ button {
 
 @media (max-width: 980px) {
   .hero-grid,
-  .analytics-grid {
+  .analytics-grid,
+  .anki-sprint-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .syllabus-domain-grid,
+  .lab-guide-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1416,12 +1952,22 @@ button {
   }
 
   .flashcards-toolbar,
-  .flashcards-stats {
+  .flashcards-stats,
+  .anki-plan {
     grid-template-columns: 1fr;
   }
 
   .flashcards-actions {
     justify-content: flex-start;
+  }
+
+  .anki-session__header,
+  .anki-review-card__meta,
+  .anki-queue__item,
+  .syllabus-domain__header,
+  .lab-guide-card__header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .focus-header,
@@ -1455,6 +2001,12 @@ button {
   .scores-grid,
   .notes-entry {
     grid-template-columns: 1fr;
+  }
+
+  .hero-tags,
+  .focus-domains,
+  .lab-guide-card__concepts {
+    gap: 8px;
   }
 
   .bar-chart {
@@ -1492,7 +2044,16 @@ button {
     justify-content: center;
   }
 
+  .flashcards-mode-switch {
+    width: 100%;
+  }
+
   .view-switch__button {
+    flex: 1 1 0;
+    text-align: center;
+  }
+
+  .flashcards-mode-switch__button {
     flex: 1 1 0;
     text-align: center;
   }
@@ -1504,6 +2065,16 @@ button {
   .flashcard,
   .flashcard__inner {
     min-height: 280px;
+  }
+
+  .anki-rating-row,
+  .anki-stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .anki-session__header h2,
+  .anki-review-card__term {
+    font-size: clamp(1.8rem, 12vw, 2.5rem);
   }
 
   .task-card {
@@ -1521,6 +2092,18 @@ button {
   .question-card__header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .impact-lab__meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .anki-rating-row,
+  .anki-stat-grid {
+    grid-template-columns: 1fr;
   }
 }
 
