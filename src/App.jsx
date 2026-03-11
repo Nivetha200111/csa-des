@@ -1,6 +1,7 @@
 import confetti from "canvas-confetti";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import FlashcardsPage from "./FlashcardsPage";
 import practiceQuestionData from "./data/csaQuestions.json";
 
 const initialDays = [
@@ -541,6 +542,24 @@ export default function App() {
   );
   const [questionState, setQuestionState] = useState({});
   const [quickNote, setQuickNote] = useState("");
+  const [activeView, setActiveView] = useState(() =>
+    typeof window !== "undefined" && window.location.hash === "#flashcards"
+      ? "flashcards"
+      : "tracker"
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const syncViewFromHash = () => {
+      setActiveView(window.location.hash === "#flashcards" ? "flashcards" : "tracker");
+    };
+
+    window.addEventListener("hashchange", syncViewFromHash);
+    return () => window.removeEventListener("hashchange", syncViewFromHash);
+  }, []);
 
   useEffect(() => {
     window.localStorage.setItem(storageKeys.days, JSON.stringify(days));
@@ -822,6 +841,16 @@ export default function App() {
     }));
   };
 
+  const switchView = (view) => {
+    setActiveView(view);
+
+    if (typeof window !== "undefined") {
+      const nextHash = view === "flashcards" ? "#flashcards" : "#tracker";
+      window.history.replaceState(null, "", nextHash);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <div
       ref={shellRef}
@@ -833,7 +862,33 @@ export default function App() {
       <div className="ambient ambient--three" />
       <div className="ambient-grid" />
 
-      <motion.main className="dashboard" variants={pageVariants} initial="hidden" animate="show">
+      <div className="view-switch">
+        <button
+          type="button"
+          className={`view-switch__button${activeView === "tracker" ? " view-switch__button--active" : ""}`}
+          onClick={() => switchView("tracker")}
+        >
+          Revision tracker
+        </button>
+        <button
+          type="button"
+          className={`view-switch__button${activeView === "flashcards" ? " view-switch__button--active" : ""}`}
+          onClick={() => switchView("flashcards")}
+        >
+          Glossary flashcards
+        </button>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {activeView === "tracker" ? (
+      <motion.main
+        key="tracker"
+        className="dashboard"
+        variants={pageVariants}
+        initial="hidden"
+        animate="show"
+        exit={{ opacity: 0, y: -18 }}
+      >
         <section className="hero-grid">
           <motion.section
             className="panel panel--hero panel--spotlight"
@@ -1166,6 +1221,10 @@ export default function App() {
           </div>
         </section>
       </motion.main>
+        ) : (
+          <FlashcardsPage key="flashcards" onBack={() => switchView("tracker")} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
