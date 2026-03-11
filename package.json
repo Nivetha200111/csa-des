@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fetch:questions": "node scripts/fetch-csa-questions.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "canvas-confetti": "^1.9.3",
     "framer-motion": "^12.5.0",
+    "pdf-parse": "^1.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

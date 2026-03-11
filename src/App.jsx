@@ -1,5 +1,7 @@
+import confetti from "canvas-confetti";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import practiceQuestionData from "./data/csaQuestions.json";
 
 const initialDays = [
   {
@@ -73,8 +75,6 @@ const initialScores = {
   mock4: "",
   mock5: "",
   mock6: "",
-  mock7: "",
-  mock8: "",
 };
 
 const storageKeys = {
@@ -255,6 +255,43 @@ function formatTimestamp(value) {
   }
 }
 
+function canAnimateCelebrations() {
+  return (
+    typeof window !== "undefined" &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function fireConfettiBurst(options = {}) {
+  if (!canAnimateCelebrations()) {
+    return;
+  }
+
+  confetti({
+    particleCount: 90,
+    spread: 80,
+    startVelocity: 38,
+    ticks: 260,
+    scalar: 1,
+    zIndex: 2500,
+    ...options,
+  });
+}
+
+function fireMilestoneConfetti() {
+  fireConfettiBurst({
+    particleCount: 120,
+    spread: 110,
+    origin: { x: 0.2, y: 0.45 },
+  });
+
+  fireConfettiBurst({
+    particleCount: 120,
+    spread: 110,
+    origin: { x: 0.8, y: 0.45 },
+  });
+}
+
 function ProgressRing({ value }) {
   const radius = 72;
   const circumference = 2 * Math.PI * radius;
@@ -404,8 +441,94 @@ function MockInput({ label, value, onChange }) {
   );
 }
 
+function PracticeQuestionCard({ question, state, onSelect, onReveal }) {
+  const selectedOption = state?.selected ?? "";
+  const isRevealed = Boolean(state?.revealed || selectedOption);
+  const correctOption = question.options.find((option) => option.id === question.correctAnswer);
+
+  return (
+    <motion.article
+      layout
+      className="question-card"
+      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.35 }}
+    >
+      <div className="question-card__header">
+        <div>
+          <div className="question-card__eyebrow">Official sample #{question.number}</div>
+          <h3>{question.domain}</h3>
+        </div>
+        <div className="question-card__badge">
+          {selectedOption
+            ? selectedOption === question.correctAnswer
+              ? "Hit"
+              : "Patch"
+            : "Live"}
+        </div>
+      </div>
+
+      <p className="question-card__prompt">{question.question}</p>
+
+      <div className="question-card__options">
+        {question.options.map((option) => {
+          const isSelected = selectedOption === option.id;
+          const isCorrect = option.id === question.correctAnswer;
+          const stateClass = !isRevealed
+            ? ""
+            : isCorrect
+              ? " question-option--correct"
+              : isSelected
+                ? " question-option--wrong"
+                : "";
+
+          return (
+            <motion.button
+              key={option.id}
+              type="button"
+              className={`question-option${stateClass}`}
+              onClick={() => onSelect(question, option.id)}
+              whileHover={{ x: 4, scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              disabled={Boolean(selectedOption)}
+            >
+              <span className="question-option__id">{option.id}</span>
+              <span className="question-option__text">{option.text}</span>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      <div className="question-card__footer">
+        <button type="button" className="question-card__reveal" onClick={() => onReveal(question.id)}>
+          {isRevealed ? "Answer visible" : "Reveal answer"}
+        </button>
+
+        <AnimatePresence initial={false}>
+          {isRevealed ? (
+            <motion.div
+              key="answer"
+              className="question-card__answer"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.24 }}
+            >
+              Correct answer: <strong>{question.correctAnswer}</strong>
+              {correctOption ? ` · ${correctOption.text}` : ""}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </motion.article>
+  );
+}
+
 export default function App() {
   const shellRef = useRef(null);
+  const previousProgressRef = useRef(null);
+  const previousToneRef = useRef(null);
+  const completedDayIdsRef = useRef(null);
   const [days, setDays] = useState(() => readStorage(storageKeys.days, initialDays, normalizeDays));
   const [selectedDay, setSelectedDay] = useState(() =>
     readStorage(storageKeys.selectedDay, 1, normalizeSelectedDay)
@@ -416,6 +539,7 @@ export default function App() {
   const [savedNotes, setSavedNotes] = useState(() =>
     readStorage(storageKeys.notes, [], normalizeNotes)
   );
+  const [questionState, setQuestionState] = useState({});
   const [quickNote, setQuickNote] = useState("");
 
   useEffect(() => {
@@ -536,6 +660,83 @@ export default function App() {
     value: value === "" ? 0 : Number(value),
   }));
 
+  const completedDayIds = useMemo(
+    () =>
+      new Set(
+        days.filter((day) => day.tasks.every((task) => task.done)).map((day) => day.id)
+      ),
+    [days]
+  );
+
+  const practiceQuestions = practiceQuestionData.questions;
+  const questionSource = practiceQuestionData.source;
+
+  const answeredQuestionCount = useMemo(
+    () =>
+      practiceQuestions.filter((question) => {
+        const selectedOption = questionState[question.id]?.selected;
+        return Boolean(selectedOption);
+      }).length,
+    [practiceQuestions, questionState]
+  );
+
+  const correctQuestionCount = useMemo(
+    () =>
+      practiceQuestions.filter(
+        (question) => questionState[question.id]?.selected === question.correctAnswer
+      ).length,
+    [practiceQuestions, questionState]
+  );
+
+  useEffect(() => {
+    if (previousProgressRef.current === null) {
+      previousProgressRef.current = overallProgress;
+      return;
+    }
+
+    const milestones = [25, 50, 75, 100];
+    const crossedMilestone = milestones.some(
+      (milestone) =>
+        previousProgressRef.current < milestone && overallProgress >= milestone
+    );
+
+    if (crossedMilestone) {
+      fireMilestoneConfetti();
+    }
+
+    previousProgressRef.current = overallProgress;
+  }, [overallProgress]);
+
+  useEffect(() => {
+    if (previousToneRef.current === null) {
+      previousToneRef.current = readiness.tone;
+      return;
+    }
+
+    if (previousToneRef.current !== "surge" && readiness.tone === "surge") {
+      fireMilestoneConfetti();
+    }
+
+    previousToneRef.current = readiness.tone;
+  }, [readiness.tone]);
+
+  useEffect(() => {
+    if (completedDayIdsRef.current === null) {
+      completedDayIdsRef.current = completedDayIds;
+      return;
+    }
+
+    const unlockedNewDay = [...completedDayIds].some(
+      (dayId) => !completedDayIdsRef.current.has(dayId)
+    );
+
+    if (unlockedNewDay) {
+      fireMilestoneConfetti();
+    }
+
+    completedDayIdsRef.current = completedDayIds;
+  }, [completedDayIds]);
+
   const toggleTask = (dayId, taskId) => {
     setDays((previousDays) =>
       previousDays.map((day) =>
@@ -586,6 +787,39 @@ export default function App() {
 
     shellRef.current?.style.setProperty("--cursor-x", `${x}%`);
     shellRef.current?.style.setProperty("--cursor-y", `${y}%`);
+  };
+
+  const handleQuestionSelect = (question, optionId) => {
+    if (questionState[question.id]?.selected) {
+      return;
+    }
+
+    setQuestionState((previousState) => ({
+      ...previousState,
+      [question.id]: {
+        ...previousState[question.id],
+        selected: optionId,
+        revealed: optionId === question.correctAnswer,
+      },
+    }));
+
+    if (optionId === question.correctAnswer) {
+      fireConfettiBurst({
+        particleCount: 110,
+        spread: 92,
+        origin: { x: 0.5, y: 0.55 },
+      });
+    }
+  };
+
+  const revealQuestionAnswer = (questionId) => {
+    setQuestionState((previousState) => ({
+      ...previousState,
+      [questionId]: {
+        ...previousState[questionId],
+        revealed: true,
+      },
+    }));
   };
 
   return (
@@ -821,7 +1055,41 @@ export default function App() {
               </motion.section>
             </div>
 
-            <motion.section className="panel panel--notes" variants={revealVariants} custom={6}>
+            <motion.section className="panel panel--questions" variants={revealVariants} custom={6}>
+              <div className="questions-header">
+                <SectionHeading
+                  eyebrow="Practice lab"
+                  title="CSA Sample Questions"
+                  detail="These are scraped from the public ServiceNow CSA blueprint sample PDF. Use them as calibration, not as a dump substitute."
+                />
+                <div className="questions-stats">
+                  <span>{correctQuestionCount}/{practiceQuestions.length} correct</span>
+                  <span>{answeredQuestionCount} answered</span>
+                </div>
+              </div>
+
+              <div className="questions-source">
+                <span>{questionSource.label}</span>
+                <span>Fetched {formatTimestamp(questionSource.fetchedAt)}</span>
+                <a href={questionSource.sourceUrl} target="_blank" rel="noreferrer">
+                  Source PDF
+                </a>
+              </div>
+
+              <div className="questions-list">
+                {practiceQuestions.map((question) => (
+                  <PracticeQuestionCard
+                    key={question.id}
+                    question={question}
+                    state={questionState[question.id]}
+                    onSelect={handleQuestionSelect}
+                    onReveal={revealQuestionAnswer}
+                  />
+                ))}
+              </div>
+            </motion.section>
+
+            <motion.section className="panel panel--notes" variants={revealVariants} custom={7}>
               <div className="notes-header">
                 <SectionHeading
                   eyebrow="Capture"

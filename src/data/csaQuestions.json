@@ -1,0 +1,135 @@
+{
+  "source": {
+    "label": "ServiceNow CSA blueprint sample questions",
+    "sourceUrl": "https://www.servicenow.com/community/s/cgfwn76974/attachments/cgfwn76974/training-certifications-forum/10716/1/CSA%20Exam%20Points%20Desitribution.pdf",
+    "fetchedAt": "2026-03-11T06:40:56.194Z",
+    "notes": "Questions are scraped from the public ServiceNow community blueprint PDF attachment. They are sample items, not a full official mock exam."
+  },
+  "questions": [
+    {
+      "id": "official-sample-1",
+      "number": 1,
+      "domain": "User Interface and Navigation",
+      "question": "Which one of these applications is available to all users?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Change"
+        },
+        {
+          "id": "B",
+          "text": "Incident"
+        },
+        {
+          "id": "C",
+          "text": "Facilities"
+        },
+        {
+          "id": "D",
+          "text": "Self Service"
+        }
+      ],
+      "correctAnswer": "D"
+    },
+    {
+      "id": "official-sample-2",
+      "number": 2,
+      "domain": "Collaboration",
+      "question": "Which module displays a list of tasks assigned to a user’s group, but not yet assigned to an individual user?",
+      "options": [
+        {
+          "id": "A",
+          "text": "My Teams Work"
+        },
+        {
+          "id": "B",
+          "text": "My Groups Work"
+        },
+        {
+          "id": "C",
+          "text": "My Groups Tasks"
+        },
+        {
+          "id": "D",
+          "text": "My Teams Tasks"
+        }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": "official-sample-3",
+      "number": 3,
+      "domain": "Database Administration",
+      "question": "Which one of the following is a definition for transform maps in ServiceNow?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A map that is used to store the history of the incident records"
+        },
+        {
+          "id": "B",
+          "text": "A map used to add data to encrypted fields"
+        },
+        {
+          "id": "C",
+          "text": "A map used to trigger Business Rules before the data is queued in the outbound Web Service"
+        },
+        {
+          "id": "D",
+          "text": "A map to determine relationships between fields displaying in an Import Set to fields in an existing table"
+        }
+      ],
+      "correctAnswer": "D"
+    },
+    {
+      "id": "official-sample-4",
+      "number": 4,
+      "domain": "Self-Service and Process Automation",
+      "question": "Multiple Choice, Single Line Text, and Select Box are what type of elements in ServiceNow?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Order Guides"
+        },
+        {
+          "id": "B",
+          "text": "Request Types"
+        },
+        {
+          "id": "C",
+          "text": "Variable Types"
+        },
+        {
+          "id": "D",
+          "text": "Related Lists"
+        }
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "id": "official-sample-5",
+      "number": 5,
+      "domain": "Introduction to Development",
+      "question": "What is the language used for scripting in ServiceNow?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Java"
+        },
+        {
+          "id": "B",
+          "text": "AngularJS"
+        },
+        {
+          "id": "C",
+          "text": "JavaScript"
+        },
+        {
+          "id": "D",
+          "text": "Jelly"
+        }
+      ],
+      "correctAnswer": "C"
+    }
+  ]
+}
