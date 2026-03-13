@@ -1,6 +1,7 @@
 import confetti from "canvas-confetti";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import BlueprintChecklist from "./BlueprintChecklist";
 import FlashcardsPage from "./FlashcardsPage";
 import practiceQuestionData from "./data/csaQuestions.json";
 
@@ -963,11 +964,12 @@ export default function App() {
   );
   const [questionState, setQuestionState] = useState({});
   const [quickNote, setQuickNote] = useState("");
-  const [activeView, setActiveView] = useState(() =>
-    typeof window !== "undefined" && window.location.hash === "#flashcards"
-      ? "flashcards"
-      : "tracker"
-  );
+  const [activeView, setActiveView] = useState(() => {
+    if (typeof window === "undefined") return "tracker";
+    if (window.location.hash === "#flashcards") return "flashcards";
+    if (window.location.hash === "#blueprint") return "blueprint";
+    return "tracker";
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -975,7 +977,9 @@ export default function App() {
     }
 
     const syncViewFromHash = () => {
-      setActiveView(window.location.hash === "#flashcards" ? "flashcards" : "tracker");
+      if (window.location.hash === "#flashcards") setActiveView("flashcards");
+      else if (window.location.hash === "#blueprint") setActiveView("blueprint");
+      else setActiveView("tracker");
     };
 
     window.addEventListener("hashchange", syncViewFromHash);
@@ -1297,8 +1301,8 @@ export default function App() {
     setActiveView(view);
 
     if (typeof window !== "undefined") {
-      const nextHash = view === "flashcards" ? "#flashcards" : "#tracker";
-      window.history.replaceState(null, "", nextHash);
+      const hashMap = { flashcards: "#flashcards", blueprint: "#blueprint", tracker: "#tracker" };
+      window.history.replaceState(null, "", hashMap[view] || "#tracker");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -1328,6 +1332,13 @@ export default function App() {
           onClick={() => switchView("flashcards")}
         >
           Glossary flashcards
+        </button>
+        <button
+          type="button"
+          className={`view-switch__button${activeView === "blueprint" ? " view-switch__button--active" : ""}`}
+          onClick={() => switchView("blueprint")}
+        >
+          Exam blueprint
         </button>
       </div>
 
@@ -1752,8 +1763,10 @@ export default function App() {
               </div>
             </section>
           </motion.main>
-        ) : (
+        ) : activeView === "flashcards" ? (
           <FlashcardsPage key="flashcards" onBack={() => switchView("tracker")} />
+        ) : (
+          <BlueprintChecklist key="blueprint" onBack={() => switchView("tracker")} />
         )}
       </AnimatePresence>
     </div>
