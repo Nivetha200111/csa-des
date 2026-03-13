@@ -82,117 +82,152 @@ const examBlueprint = [
   },
 ];
 
+/* Topics already finished before the plan starts */
+const preCheckedTopics = ["bp-5-3", "bp-5-4"];
+
 const studyPlan = [
   {
     id: "eve",
     day: "Evening Before",
-    timeLabel: "4 hours",
+    timeLabel: "4 hours · 8 PM – midnight",
     color: "ice",
     blocks: [
       {
         id: "eve-1",
-        time: "Hour 1",
-        duration: "50 min + 10 min break",
-        domainRef: "bp-1",
-        title: "Domain 1 · Platform Overview & Navigation",
-        weight: "7%",
-        strategy: "Skim the platform UI, memorise navigation paths, understand favorites and the Application Navigator. This is the lightest domain — use it to warm up.",
-        topicIds: ["bp-1-1", "bp-1-2", "bp-1-3", "bp-1-4"],
+        time: "8:00 – 9:00 PM",
+        duration: "1 hr",
+        domainRef: null,
+        title: "Platform & Config Warm-up",
+        weight: null,
+        strategy: "Start with the lightest material while your brain is warming up. Mix platform navigation with plugin activation so it doesn't feel monotonous. Get the Application Navigator into muscle memory.",
+        topicIds: ["bp-1-1", "bp-2-1", "bp-1-4", "bp-6-1"],
       },
       {
         id: "eve-2",
-        time: "Hour 2",
-        duration: "50 min + 10 min break",
-        domainRef: "bp-2",
-        title: "Domain 2 · Instance Configuration",
-        weight: "10%",
-        strategy: "Focus on plugin activation, form personalisation, and the difference between personalisation and configuration. Know which UI settings live where.",
-        topicIds: ["bp-2-1", "bp-2-2", "bp-2-3"],
+        time: "9:10 – 10:10 PM",
+        duration: "1 hr",
+        domainRef: null,
+        title: "Instance Behaviour & Logic",
+        weight: null,
+        strategy: "Now that you've seen the platform, dig into how the instance behaves. Pair personalisation with Business Rules — both change how forms work, but one is client-side and the other server-side. Drill that difference hard.",
+        topicIds: ["bp-1-3", "bp-2-2", "bp-6-2", "bp-2-3"],
       },
       {
         id: "eve-3",
-        time: "Hours 3-4",
-        duration: "1 hr 45 min + 15 min review",
-        domainRef: "bp-6",
-        title: "Domain 6 · Data Migration & Integration",
-        weight: "13%",
-        strategy: "UI Policies vs Business Rules is a classic exam trap — drill the differences. Understand update sets end-to-end, and know the basics of server-side vs client-side scripting.",
-        topicIds: ["bp-6-1", "bp-6-2", "bp-6-3", "bp-6-4"],
+        time: "10:20 – 11:20 PM",
+        duration: "1 hr",
+        domainRef: null,
+        title: "Capabilities & Migration",
+        weight: null,
+        strategy: "Understand what the platform can do at a high level, then pivot to how changes move between instances. Update sets are heavily tested — know the lifecycle end-to-end. Scripting basics: know when GlideRecord runs server-side vs client scripts.",
+        topicIds: ["bp-1-2", "bp-6-3", "bp-6-4"],
+      },
+      {
+        id: "eve-review",
+        time: "11:20 PM – midnight",
+        duration: "40 min",
+        domainRef: null,
+        title: "Evening Review Pass",
+        weight: null,
+        strategy: "Quick flashcard run through all 11 topics you just covered. Write down anything that didn't stick on your patch sheet. Sleep on it — consolidation happens overnight.",
+        topicIds: [],
       },
     ],
-    summary: "You'll finish the evening with 3 lighter domains locked in (30% of the exam). Sleep on it.",
+    summary: "You'll finish the evening with D1 complete, D2 complete, and D6 complete — that's 30% of the exam locked in before bed.",
   },
   {
     id: "main",
     day: "Main Day",
-    timeLabel: "Full day (~9 hours)",
+    timeLabel: "Full day · 9 AM – 8 PM",
     color: "gold",
     blocks: [
       {
         id: "main-1",
-        time: "Morning Block",
-        duration: "2.5 hrs (9:00 – 11:30)",
-        domainRef: "bp-3",
-        title: "Domain 3 · Configuring Apps for Collaboration",
-        weight: "20%",
-        strategy: "This is the widest domain — 9 topics. Spend ~15 min per topic. Hit lists, filters, form config, VTBs, dashboards, and notifications. Use your PDI to actually build one of each.",
-        topicIds: ["bp-3-1", "bp-3-2", "bp-3-3", "bp-3-4", "bp-3-5", "bp-3-6", "bp-3-7", "bp-3-8", "bp-3-9"],
+        time: "9:00 – 10:30 AM",
+        duration: "1.5 hrs",
+        domainRef: null,
+        title: "Forms, Lists & Schema",
+        weight: null,
+        strategy: "Start with how data is structured (Data Schema) then immediately see it in action through lists and forms. This bridges D5 and D3 naturally. Understand field types, table inheritance, and how the dictionary works.",
+        topicIds: ["bp-5-1", "bp-3-1", "bp-3-2", "bp-3-3", "bp-3-4"],
       },
       {
         id: "main-2",
-        time: "Midday Block",
-        duration: "2 hrs (12:00 – 14:00)",
-        domainRef: "bp-4",
-        title: "Domain 4 · Self Service & Automation",
-        weight: "20%",
-        strategy: "Knowledge Management and Service Catalog are high-yield. Understand the catalog item → request → fulfillment flow. Know Workflow Studio triggers and Virtual Agent basics.",
-        topicIds: ["bp-4-1", "bp-4-2", "bp-4-3", "bp-4-4"],
+        time: "10:40 AM – 12:00 PM",
+        duration: "1 hr 20 min",
+        domainRef: null,
+        title: "Advanced Config & Access Control",
+        weight: null,
+        strategy: "Deep-dive into advanced forms, then switch to ACLs while form context is fresh — you'll understand what ACLs protect because you just built the forms. Pair with task management since tasks are what ACLs often guard.",
+        topicIds: ["bp-3-5", "bp-5-2", "bp-3-6", "bp-3-7"],
       },
       {
         id: "main-break",
-        time: "Lunch Break",
-        duration: "1 hr (14:00 – 15:00)",
+        time: "12:00 – 1:00 PM",
+        duration: "1 hr",
         domainRef: null,
-        title: "Recharge",
+        title: "Lunch Break",
         weight: null,
-        strategy: "Eat properly. Skim your evening-before notes once while resting — passive reinforcement for D1, D2, D6.",
+        strategy: "Eat properly. Skim your evening-before notes once — passive reinforcement for D1, D2, D6. Don't study new material during lunch.",
         topicIds: [],
       },
       {
         id: "main-3",
-        time: "Afternoon Block",
-        duration: "3 hrs (15:00 – 18:00)",
-        domainRef: "bp-5",
-        title: "Domain 5 · Database Management & Platform Security",
-        weight: "30%",
-        strategy: "The heaviest domain. Give Data Schema and ACLs extra time — they're the most tested. Understand table relationships, coalesce in imports, CMDB class hierarchy, and the Shared Responsibility Model.",
-        topicIds: ["bp-5-1", "bp-5-2", "bp-5-3", "bp-5-4", "bp-5-5", "bp-5-6"],
+        time: "1:00 – 3:00 PM",
+        duration: "2 hrs",
+        domainRef: null,
+        title: "Self Service & Dashboards",
+        weight: null,
+        strategy: "Knowledge articles feed the Service Catalog portal. Study them together so you see the self-service loop. Then build dashboards and notifications — these are the reporting/alerting layer on top of everything you've built.",
+        topicIds: ["bp-4-1", "bp-4-2", "bp-3-8", "bp-3-9"],
       },
       {
         id: "main-4",
-        time: "Evening Review",
-        duration: "1.5 hrs (18:30 – 20:00)",
+        time: "3:15 – 5:15 PM",
+        duration: "2 hrs",
         domainRef: null,
-        title: "Full Review & Mock Practice",
+        title: "Automation & Security",
         weight: null,
-        strategy: "Run through all 30 topics mentally. Do a mock exam or sample questions. Write down anything shaky on your patch sheet. Focus extra time on Domain 5 and Domain 3 weak spots.",
+        strategy: "The heaviest conceptual block. Workflow Studio and Virtual Agent automate what you've been building. Security Center and Shared Responsibility Model round out Domain 5 — know what ServiceNow secures vs what you're responsible for.",
+        topicIds: ["bp-4-3", "bp-4-4", "bp-5-5", "bp-5-6"],
+      },
+      {
+        id: "main-5",
+        time: "5:30 – 6:15 PM",
+        duration: "45 min",
+        domainRef: null,
+        title: "Revisit Importing Data & CMDB",
+        weight: null,
+        strategy: "You've already finished these — this is a quick confidence check. Skim coalesce logic, transform maps, CI class hierarchy, and CSDM layers. Make sure it's still solid.",
+        topicIds: ["bp-5-3", "bp-5-4"],
+      },
+      {
+        id: "main-6",
+        time: "6:30 – 8:00 PM",
+        duration: "1.5 hrs",
+        domainRef: null,
+        title: "Full Review & Mock Exam",
+        weight: null,
+        strategy: "Run a full mock exam or the sample questions. Every wrong answer goes on your patch sheet. Focus extra time on Domain 5 and Domain 3 — they're 50% of the exam combined. End with one last flashcard sprint on your weakest 10 terms.",
         topicIds: [],
       },
     ],
-    summary: "By end of day you'll have covered the remaining 70% of the exam. Domain 5 gets the most time because it's worth 30%.",
+    summary: "By 8 PM you'll have covered all 30 topics, revisited your completed ones, and taken a mock. Domain 5 (30%) is spread across multiple blocks so it sinks in deeper.",
   },
 ];
 
 const STORAGE_KEY = "csa-blueprint-checklist";
 
 function readChecklist() {
+  const defaults = Object.fromEntries(preCheckedTopics.map((id) => [id, true]));
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
+    if (!raw) return defaults;
     const parsed = JSON.parse(raw);
-    return typeof parsed === "object" && parsed !== null ? parsed : {};
+    if (typeof parsed !== "object" || parsed === null) return defaults;
+    return { ...defaults, ...parsed };
   } catch {
-    return {};
+    return defaults;
   }
 }
 
@@ -339,8 +374,9 @@ export default function BlueprintChecklist({ onBack }) {
           <div className="section-heading__eyebrow">Study schedule</div>
           <div className="section-heading__title">1 Day + 4 Hour Plan</div>
           <div className="section-heading__detail">
-            Cover the 3 lighter domains (30% of the exam) the evening before, then crush the 3 heavy domains on the main day.
-            Domain 5 gets the biggest block because it's worth 30%.
+            Topics are shuffled across domains so you build connections between concepts instead of studying in silos.
+            Importing Data and CMDB are already done — the plan includes a quick revisit to keep them fresh.
+            Evening starts at 8 PM; main day runs 9 AM – 8 PM.
           </div>
         </div>
 
