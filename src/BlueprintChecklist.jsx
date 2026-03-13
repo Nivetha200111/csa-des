@@ -1,8 +1,5 @@
-import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useState } from "react";
-
-/* ── Exam blueprint – drives the game (module / domain worlds) ── */
+import { useEffect, useMemo, useState } from "react";
 
 const examBlueprint = [
   {
@@ -85,489 +82,228 @@ const examBlueprint = [
   },
 ];
 
-/* Topics already finished before the plan starts */
-const preCheckedTopics = ["bp-5-3", "bp-5-4"];
-
-/* ── Study plan (shuffled, strategy guide only) ── */
-
-const studyPlan = [
-  {
-    id: "eve",
-    day: "Evening Before",
-    timeLabel: "9:30 PM – 12:30 AM",
-    blocks: [
-      { id: "eve-1", time: "9:30 – 11:00 PM", title: "Mixed Warm-up Sprint", topicIds: ["bp-3-9", "bp-1-2", "bp-5-5", "bp-2-3", "bp-6-4", "bp-4-4"] },
-      { id: "eve-w", time: "11:00 PM – 12:30 AM", title: "Workout", topicIds: [], isWorkout: true },
-    ],
-  },
-  {
-    id: "main",
-    day: "Main Day",
-    timeLabel: "8 AM – 7:30 PM",
-    blocks: [
-      { id: "main-1", time: "8:00 – 9:30", title: "Forms, Policies & Access", topicIds: ["bp-3-3", "bp-1-1", "bp-5-2", "bp-6-1", "bp-3-7", "bp-4-1"] },
-      { id: "main-2", time: "9:40 – 11:00", title: "Config, Lists & Security", topicIds: ["bp-2-1", "bp-3-1", "bp-5-6", "bp-1-3", "bp-3-5"] },
-      { id: "main-w", time: "11:00 – 12:30", title: "Workout", topicIds: [], isWorkout: true },
-      { id: "main-3", time: "12:30 – 2:30", title: "Catalog, Rules & Dashboards", topicIds: ["bp-6-2", "bp-4-2", "bp-3-8", "bp-2-2", "bp-3-2"] },
-      { id: "main-4", time: "2:45 – 4:45", title: "Automation, Schema & Nav", topicIds: ["bp-5-1", "bp-4-3", "bp-1-4", "bp-3-6", "bp-6-3", "bp-3-4"] },
-      { id: "main-5", time: "5:00 – 5:45", title: "Revisit Imports & CMDB", topicIds: ["bp-5-3", "bp-5-4"] },
-      { id: "main-6", time: "6:00 – 7:30", title: "Final Review & Mock", topicIds: [] },
-    ],
-  },
-];
-
-/* ── Helpers ── */
-
 const STORAGE_KEY = "csa-blueprint-checklist";
 
 function readChecklist() {
-  const defaults = Object.fromEntries(preCheckedTopics.map((id) => [id, true]));
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaults;
+    if (!raw) return {};
     const parsed = JSON.parse(raw);
-    if (typeof parsed !== "object" || parsed === null) return defaults;
-    return { ...defaults, ...parsed };
+    return typeof parsed === "object" && parsed !== null ? parsed : {};
   } catch {
-    return defaults;
+    return {};
   }
 }
 
-function fireCoinBurst(originX = 0.5, originY = 0.5) {
-  confetti({
-    particleCount: 35,
-    spread: 50,
-    startVelocity: 22,
-    ticks: 100,
-    colors: ["#ffd700", "#ffed4a", "#f7d74e", "#fff8dc"],
-    scalar: 0.7,
-    zIndex: 2500,
-    origin: { x: originX, y: originY },
-  });
-}
-
-function fireWorldClear() {
-  const duration = 1200;
-  const end = Date.now() + duration;
-  const colors = ["#e52521", "#049cd8", "#fbd000", "#43b047", "#ffffff"];
-  (function frame() {
-    confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors, zIndex: 2500 });
-    confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors, zIndex: 2500 });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  })();
-}
-
-function fireGameClear() {
-  const duration = 3000;
-  const end = Date.now() + duration;
-  const colors = ["#e52521", "#049cd8", "#fbd000", "#43b047", "#f8a8d8"];
-  (function frame() {
-    confetti({ particleCount: 6, angle: 60, spread: 70, origin: { x: 0, y: 0.6 }, colors, zIndex: 2500 });
-    confetti({ particleCount: 6, angle: 120, spread: 70, origin: { x: 1, y: 0.6 }, colors, zIndex: 2500 });
-    confetti({ particleCount: 4, angle: 90, spread: 100, origin: { x: 0.5, y: 0.3 }, colors, zIndex: 2500 });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  })();
-}
-
 const pageVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.08 } },
-};
-
-const worldVariants = {
-  hidden: { opacity: 0, y: 40 },
-  show: (i = 0) => ({
+  hidden: { opacity: 0, y: 24 },
+  show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] },
+    transition: {
+      duration: 0.7,
+      ease: [0.16, 1, 0.3, 1],
+      when: "beforeChildren",
+      staggerChildren: 0.06,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 28, filter: "blur(12px)" },
+  show: (index = 0) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.65,
+      delay: index * 0.07,
+      ease: [0.16, 1, 0.3, 1],
+    },
   }),
 };
 
-/* ══════════════════════════════════════════
-   Component
-   ══════════════════════════════════════════ */
+const topicVariants = {
+  hidden: { opacity: 0, x: -18 },
+  show: (index = 0) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.35,
+      delay: index * 0.04,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  }),
+};
 
 export default function BlueprintChecklist({ onBack }) {
   const [checked, setChecked] = useState(readChecklist);
-  const [showGuide, setShowGuide] = useState(false);
-  const [justCleared, setJustCleared] = useState(null);
-  const [gameComplete, setGameComplete] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
   }, [checked]);
 
-  /* ── Totals (from examBlueprint) ── */
-  const totalTopics = useMemo(() => examBlueprint.reduce((s, d) => s + d.topics.length, 0), []);
-  const completedTopics = useMemo(() => Object.values(checked).filter(Boolean).length, [checked]);
-  const overallPercent = totalTopics ? Math.round((completedTopics / totalTopics) * 100) : 0;
-  const score = completedTopics * 1000;
+  const totalTopics = useMemo(
+    () => examBlueprint.reduce((sum, d) => sum + d.topics.length, 0),
+    []
+  );
 
-  /* ── Domain progress ── */
-  const domainProgress = useCallback(
-    (domain) => {
-      const done = domain.topics.filter((t) => checked[t.id]).length;
-      return { done, total: domain.topics.length, percent: Math.round((done / domain.topics.length) * 100) };
-    },
+  const completedTopics = useMemo(
+    () => Object.values(checked).filter(Boolean).length,
     [checked]
   );
 
-  /* ── Completed worlds (domains fully done) ── */
-  const completedWorlds = useMemo(
-    () => examBlueprint.filter((d) => domainProgress(d).percent === 100).length,
-    [domainProgress]
-  );
+  const overallPercent = totalTopics
+    ? Math.round((completedTopics / totalTopics) * 100)
+    : 0;
 
-  /* ── Current level (first unchecked topic by domain order) ── */
-  const currentLevelId = useMemo(() => {
-    for (const domain of examBlueprint) {
-      for (const topic of domain.topics) {
-        if (!checked[topic.id]) return topic.id;
-      }
-    }
-    return null;
-  }, [checked]);
-
-  /* ── Current world ── */
-  const currentWorldNum = useMemo(() => {
-    for (let i = 0; i < examBlueprint.length; i++) {
-      if (examBlueprint[i].topics.some((t) => !checked[t.id])) return i + 1;
-    }
-    return 6;
-  }, [checked]);
-
-  /* ── Toggle ── */
-  const toggle = useCallback(
-    (topicId, event) => {
-      setChecked((prev) => {
-        const wasDone = prev[topicId];
-        const next = { ...prev, [topicId]: !wasDone };
-
-        if (!wasDone) {
-          const rect = event?.currentTarget?.getBoundingClientRect();
-          if (rect) {
-            const ox = rect.left / window.innerWidth + rect.width / (2 * window.innerWidth);
-            const oy = rect.top / window.innerHeight;
-            fireCoinBurst(ox, oy);
-          } else {
-            fireCoinBurst();
-          }
-
-          // Check if domain (world) is now cleared
-          const domain = examBlueprint.find((d) => d.topics.some((t) => t.id === topicId));
-          if (domain) {
-            const allDone = domain.topics.every((t) => (t.id === topicId ? true : next[t.id]));
-            if (allDone) {
-              setJustCleared(domain.id);
-              setTimeout(() => setJustCleared(null), 2500);
-              setTimeout(fireWorldClear, 200);
-            }
-          }
-
-          // Check game complete
-          const totalDone = Object.values(next).filter(Boolean).length;
-          if (totalDone >= totalTopics) {
-            setTimeout(() => {
-              setGameComplete(true);
-              fireGameClear();
-            }, 600);
-          }
-        }
-
-        return next;
-      });
-    },
-    [totalTopics]
-  );
-
-  /* ── Reset ── */
-  const resetAll = () => {
-    const defaults = Object.fromEntries(preCheckedTopics.map((id) => [id, true]));
-    setChecked(defaults);
-    setGameComplete(false);
-    setJustCleared(null);
+  const toggle = (topicId) => {
+    setChecked((prev) => ({ ...prev, [topicId]: !prev[topicId] }));
   };
 
-  /* ══════════════════════════════════════════
-     Render
-     ══════════════════════════════════════════ */
+  const domainProgress = (domain) => {
+    const done = domain.topics.filter((t) => checked[t.id]).length;
+    return { done, total: domain.topics.length, percent: Math.round((done / domain.topics.length) * 100) };
+  };
+
+  const resetAll = () => setChecked({});
 
   return (
     <motion.main
       key="blueprint"
-      className="mario-game"
+      className="dashboard blueprint-page"
       variants={pageVariants}
       initial="hidden"
       animate="show"
-      exit={{ opacity: 0 }}
+      exit={{ opacity: 0, y: -18 }}
     >
-      {/* Decorative clouds */}
-      <div className="mario-sky" aria-hidden="true">
-        <div className="mario-cloud mario-cloud--1" />
-        <div className="mario-cloud mario-cloud--2" />
-        <div className="mario-cloud mario-cloud--3" />
-        <div className="mario-cloud mario-cloud--4" />
-      </div>
+      {/* Hero */}
+      <motion.section className="panel panel--hero panel--spotlight blueprint-hero" variants={cardVariants} custom={0}>
+        <div className="hero-copy">
+          <div className="hero-copy__eyebrow">CSA exam blueprint</div>
+          <h1 className="blueprint-hero__title">Topic Checklist</h1>
+          <p>
+            Track every exam topic across all 6 domains. Check them off as you study —
+            your progress is saved automatically.
+          </p>
+        </div>
 
-      {/* HUD */}
-      <div className="mario-hud">
-        <div className="mario-hud__cell">
-          <span className="mario-hud__label">SCORE</span>
-          <span className="mario-hud__value">{String(score).padStart(6, "0")}</span>
+        <div className="blueprint-hero__stats">
+          <div className="blueprint-stat">
+            <span className="blueprint-stat__value">{completedTopics}/{totalTopics}</span>
+            <span className="blueprint-stat__label">Topics covered</span>
+          </div>
+          <div className="blueprint-stat">
+            <span className="blueprint-stat__value">{overallPercent}%</span>
+            <span className="blueprint-stat__label">Overall progress</span>
+          </div>
+          <div className="blueprint-stat">
+            <span className="blueprint-stat__value">
+              {examBlueprint.filter((d) => domainProgress(d).percent === 100).length}/6
+            </span>
+            <span className="blueprint-stat__label">Domains complete</span>
+          </div>
         </div>
-        <div className="mario-hud__cell">
-          <span className="mario-hud__label">COINS</span>
-          <span className="mario-hud__value">{completedTopics}/{totalTopics}</span>
-        </div>
-        <div className="mario-hud__cell">
-          <span className="mario-hud__label">WORLD</span>
-          <span className="mario-hud__value">{currentWorldNum}-1</span>
-        </div>
-        <div className="mario-hud__cell">
-          <span className="mario-hud__label">STARS</span>
-          <span className="mario-hud__value">{completedWorlds}/6</span>
-        </div>
-      </div>
 
-      {/* Title Card */}
-      <motion.section className="mario-title-card" variants={worldVariants} custom={0}>
-        <div className="mario-title-card__pre">SUPER</div>
-        <h1 className="mario-title-card__title">CSA WORLD</h1>
-        <p className="mario-title-card__sub">
-          Clear all 30 levels across 6 worlds to earn your ServiceNow CSA
-        </p>
-        <div className="mario-overall-bar">
-          <div className="mario-overall-bar__label">
-            <span>COURSE PROGRESS</span>
+        <div className="blueprint-hero__meter">
+          <div className="blueprint-hero__meter-label">
+            <span>Blueprint completion</span>
             <span>{overallPercent}%</span>
           </div>
-          <div className="mario-bar">
+          <div className="meter meter--large">
             <motion.div
-              className="mario-bar__fill"
+              className="meter__fill"
               animate={{ width: `${overallPercent}%` }}
-              transition={{ type: "spring", stiffness: 100, damping: 16 }}
+              transition={{ type: "spring", stiffness: 110, damping: 18 }}
             />
           </div>
         </div>
+
+        {completedTopics > 0 && (
+          <motion.button
+            type="button"
+            className="blueprint-reset"
+            onClick={resetAll}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Reset all
+          </motion.button>
+        )}
       </motion.section>
 
-      {/* ── World Map (module / domain driven) ── */}
-      <div className="mario-world-map">
-        {examBlueprint.map((domain, worldIndex) => {
-          const worldNum = worldIndex + 1;
+      {/* Domain cards */}
+      <div className="blueprint-grid">
+        {examBlueprint.map((domain, domainIndex) => {
           const progress = domainProgress(domain);
-          const isCleared = progress.percent === 100;
-          const wasJustCleared = justCleared === domain.id;
+          const isComplete = progress.percent === 100;
 
           return (
-            <motion.div
+            <motion.section
               key={domain.id}
-              className={`mario-world${isCleared ? " mario-world--cleared" : ""}${wasJustCleared ? " mario-world--celebrating" : ""}`}
-              variants={worldVariants}
-              custom={worldIndex + 1}
+              className={`panel blueprint-domain-card${isComplete ? " blueprint-domain-card--done" : ""}`}
+              variants={cardVariants}
+              custom={domainIndex + 1}
             >
-              {/* World Header */}
-              <div className="mario-world__banner">
-                <span className="mario-world__number">WORLD {worldNum}</span>
-                <span className="mario-world__name">{domain.title}</span>
-                <span className="mario-world__weight">{domain.weight}%</span>
-                <span className="mario-world__status">
-                  {isCleared ? "CLEAR!" : `${progress.done}/${progress.total}`}
-                </span>
+              <div className="blueprint-domain-card__header">
+                <div>
+                  <div className="blueprint-domain-card__eyebrow">Domain {domain.domain}</div>
+                  <h2 className="blueprint-domain-card__title">{domain.title}</h2>
+                </div>
+                <div className="blueprint-domain-card__weight">{domain.weight}%</div>
               </div>
 
-              {/* Level Path */}
-              <div className="mario-world__path">
-                <div className="mario-path-start">
-                  <span>START</span>
+              <div className="blueprint-domain-card__progress">
+                <div className="blueprint-domain-card__progress-label">
+                  <span>{progress.done}/{progress.total} topics</span>
+                  <span>{progress.percent}%</span>
                 </div>
-
-                {domain.topics.map((topic, levelIndex) => {
-                  const isDone = checked[topic.id];
-                  const isCurrent = topic.id === currentLevelId;
-                  const levelId = `${worldNum}-${levelIndex + 1}`;
-
-                  return (
-                    <div className="mario-level-group" key={topic.id}>
-                      <div className={`mario-path-segment${isDone || (levelIndex === 0 && progress.done > 0) ? " mario-path-segment--active" : ""}`} />
-                      <div className="mario-level-wrapper">
-                        <AnimatePresence>
-                          {isCurrent && (
-                            <motion.div
-                              className="mario-pointer"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0 }}
-                            >
-                              <span className="mario-pointer__arrow" />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                        <motion.button
-                          type="button"
-                          className={`mario-block${isDone ? " mario-block--done" : ""}${isCurrent ? " mario-block--current" : ""}`}
-                          onClick={(e) => toggle(topic.id, e)}
-                          whileTap={{ scale: 0.85 }}
-                          animate={
-                            isDone
-                              ? { scale: [1, 1.15, 1], transition: { duration: 0.3 } }
-                              : {}
-                          }
-                          title={topic.label}
-                        >
-                          <span className="mario-block__symbol">
-                            {isDone ? "\u2605" : "?"}
-                          </span>
-                        </motion.button>
-                        <div className="mario-level-id">{levelId}</div>
-                        <div className="mario-level-name">{topic.label}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Path to Castle */}
-                <div className={`mario-path-segment${isCleared ? " mario-path-segment--active" : ""}`} />
-
-                {/* Castle */}
-                <div className={`mario-castle${isCleared ? " mario-castle--cleared" : ""}`}>
-                  <div className="mario-castle__turrets">
-                    <div className="mario-castle__turret" />
-                    <div className="mario-castle__turret" />
-                    <div className="mario-castle__turret" />
-                  </div>
-                  <div className="mario-castle__body">
-                    <div className="mario-castle__door" />
-                  </div>
-                  {isCleared && (
-                    <motion.div
-                      className="mario-castle__flag"
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ type: "spring", stiffness: 200, damping: 12 }}
-                    >
-                      <span className="mario-castle__flag-star">{"\u2605"}</span>
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-
-              {/* World Clear Banner */}
-              <AnimatePresence>
-                {wasJustCleared && (
+                <div className="meter">
                   <motion.div
-                    className="mario-world-clear"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 14 }}
-                  >
-                    WORLD {worldNum} CLEAR!
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Pipe connector to next world */}
-              {worldIndex < examBlueprint.length - 1 && (
-                <div className="mario-pipe">
-                  <div className="mario-pipe__lip" />
-                  <div className="mario-pipe__shaft" />
+                    className="meter__fill"
+                    animate={{ width: `${progress.percent}%` }}
+                    transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                  />
                 </div>
-              )}
-            </motion.div>
+              </div>
+
+              <div className="blueprint-topic-list">
+                {domain.topics.map((topic, topicIndex) => (
+                  <motion.button
+                    key={topic.id}
+                    type="button"
+                    className={`blueprint-topic${checked[topic.id] ? " blueprint-topic--done" : ""}`}
+                    onClick={() => toggle(topic.id)}
+                    variants={topicVariants}
+                    custom={topicIndex}
+                    initial="hidden"
+                    animate="show"
+                    whileHover={{ scale: 1.01, x: 4 }}
+                    whileTap={{ scale: 0.995 }}
+                  >
+                    <motion.span
+                      className={`blueprint-topic__check${checked[topic.id] ? " blueprint-topic__check--done" : ""}`}
+                      animate={checked[topic.id] ? { scale: [1, 1.2, 1] } : { scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.span
+                        className="blueprint-topic__dot"
+                        animate={checked[topic.id] ? { scale: 1, opacity: 1 } : { scale: 0.2, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      />
+                    </motion.span>
+                    <span className="blueprint-topic__label">{topic.label}</span>
+                    <span className="blueprint-topic__state">
+                      {checked[topic.id] ? "Done" : "Pending"}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.section>
           );
         })}
-      </div>
-
-      {/* Game Complete Screen */}
-      <AnimatePresence>
-        {gameComplete && (
-          <motion.section
-            className="mario-victory"
-            initial={{ opacity: 0, scale: 0.8, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "spring", stiffness: 150, damping: 14 }}
-          >
-            <div className="mario-victory__pre">THANK YOU!</div>
-            <h2 className="mario-victory__title">COURSE CLEAR!</h2>
-            <p className="mario-victory__sub">
-              All 30 topics completed. You are ready for the CSA exam.
-            </p>
-            <div className="mario-victory__score">
-              FINAL SCORE: {String(score).padStart(6, "0")}
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
-
-      {/* Strategy Guide Toggle */}
-      <motion.section className="mario-guide-section" variants={worldVariants} custom={7}>
-        <button
-          type="button"
-          className="mario-guide-toggle"
-          onClick={() => setShowGuide((p) => !p)}
-        >
-          {showGuide ? "HIDE STRATEGY GUIDE" : "SHOW STRATEGY GUIDE"}
-        </button>
-
-        <AnimatePresence>
-          {showGuide && (
-            <motion.div
-              className="mario-guide"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35 }}
-            >
-              {studyPlan.map((dayPlan) => (
-                <div key={dayPlan.id} className="mario-guide__day">
-                  <div className="mario-guide__day-header">
-                    <span>{dayPlan.day}</span>
-                    <span>{dayPlan.timeLabel}</span>
-                  </div>
-                  {dayPlan.blocks.map((block) => {
-                    const blockDone =
-                      block.topicIds.length > 0 &&
-                      block.topicIds.every((id) => checked[id]);
-                    return (
-                      <div
-                        key={block.id}
-                        className={`mario-guide__block${blockDone ? " mario-guide__block--done" : ""}${block.isWorkout ? " mario-guide__block--workout" : ""}`}
-                      >
-                        <span className="mario-guide__block-time">{block.time}</span>
-                        <span className="mario-guide__block-title">{block.title}</span>
-                        {block.topicIds.length > 0 && (
-                          <span className="mario-guide__block-progress">
-                            {block.topicIds.filter((id) => checked[id]).length}/
-                            {block.topicIds.length}
-                          </span>
-                        )}
-                        {block.isWorkout && (
-                          <span className="mario-guide__block-workout-badge">1.5h</span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
-
-      {/* Controls */}
-      <div className="mario-controls">
-        <motion.button
-          type="button"
-          className="mario-btn mario-btn--reset"
-          onClick={resetAll}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          RESTART GAME
-        </motion.button>
       </div>
     </motion.main>
   );
 }
+
