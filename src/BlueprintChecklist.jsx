@@ -94,13 +94,12 @@ const studyPlan = [
   {
     id: "eve",
     day: "Evening Before",
-    timeLabel: "6:30 PM – Midnight",
+    timeLabel: "9:30 PM – 12:30 AM",
     blocks: [
-      { id: "eve-w", time: "6:30 – 8:00 PM", title: "Workout", topicIds: [], isWorkout: true },
-      { id: "eve-1", time: "8:00 – 9:00 PM", title: "Platform & Config Warm-up", topicIds: ["bp-1-1", "bp-2-1", "bp-1-4", "bp-6-1"] },
-      { id: "eve-2", time: "9:10 – 10:10 PM", title: "Instance Behaviour & Logic", topicIds: ["bp-1-3", "bp-2-2", "bp-6-2", "bp-2-3"] },
-      { id: "eve-3", time: "10:20 – 11:20 PM", title: "Capabilities & Migration", topicIds: ["bp-1-2", "bp-6-3", "bp-6-4"] },
-      { id: "eve-4", time: "11:20 PM – 12:00", title: "Evening Review", topicIds: [] },
+      { id: "eve-1", time: "9:30 – 10:20 PM", title: "Platform & Config Warm-up", topicIds: ["bp-1-1", "bp-2-1", "bp-1-4", "bp-6-1"] },
+      { id: "eve-2", time: "10:30 – 11:20 PM", title: "Instance Behaviour & Logic", topicIds: ["bp-1-3", "bp-2-2", "bp-6-2", "bp-2-3"] },
+      { id: "eve-3", time: "11:30 PM – 12:10 AM", title: "Capabilities & Migration", topicIds: ["bp-1-2", "bp-6-3", "bp-6-4"] },
+      { id: "eve-4", time: "12:10 – 12:30 AM", title: "Evening Review", topicIds: [] },
     ],
   },
   {
