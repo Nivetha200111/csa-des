@@ -82,6 +82,107 @@ const examBlueprint = [
   },
 ];
 
+const studyPlan = [
+  {
+    id: "eve",
+    day: "Evening Before",
+    timeLabel: "4 hours",
+    color: "ice",
+    blocks: [
+      {
+        id: "eve-1",
+        time: "Hour 1",
+        duration: "50 min + 10 min break",
+        domainRef: "bp-1",
+        title: "Domain 1 · Platform Overview & Navigation",
+        weight: "7%",
+        strategy: "Skim the platform UI, memorise navigation paths, understand favorites and the Application Navigator. This is the lightest domain — use it to warm up.",
+        topicIds: ["bp-1-1", "bp-1-2", "bp-1-3", "bp-1-4"],
+      },
+      {
+        id: "eve-2",
+        time: "Hour 2",
+        duration: "50 min + 10 min break",
+        domainRef: "bp-2",
+        title: "Domain 2 · Instance Configuration",
+        weight: "10%",
+        strategy: "Focus on plugin activation, form personalisation, and the difference between personalisation and configuration. Know which UI settings live where.",
+        topicIds: ["bp-2-1", "bp-2-2", "bp-2-3"],
+      },
+      {
+        id: "eve-3",
+        time: "Hours 3-4",
+        duration: "1 hr 45 min + 15 min review",
+        domainRef: "bp-6",
+        title: "Domain 6 · Data Migration & Integration",
+        weight: "13%",
+        strategy: "UI Policies vs Business Rules is a classic exam trap — drill the differences. Understand update sets end-to-end, and know the basics of server-side vs client-side scripting.",
+        topicIds: ["bp-6-1", "bp-6-2", "bp-6-3", "bp-6-4"],
+      },
+    ],
+    summary: "You'll finish the evening with 3 lighter domains locked in (30% of the exam). Sleep on it.",
+  },
+  {
+    id: "main",
+    day: "Main Day",
+    timeLabel: "Full day (~9 hours)",
+    color: "gold",
+    blocks: [
+      {
+        id: "main-1",
+        time: "Morning Block",
+        duration: "2.5 hrs (9:00 – 11:30)",
+        domainRef: "bp-3",
+        title: "Domain 3 · Configuring Apps for Collaboration",
+        weight: "20%",
+        strategy: "This is the widest domain — 9 topics. Spend ~15 min per topic. Hit lists, filters, form config, VTBs, dashboards, and notifications. Use your PDI to actually build one of each.",
+        topicIds: ["bp-3-1", "bp-3-2", "bp-3-3", "bp-3-4", "bp-3-5", "bp-3-6", "bp-3-7", "bp-3-8", "bp-3-9"],
+      },
+      {
+        id: "main-2",
+        time: "Midday Block",
+        duration: "2 hrs (12:00 – 14:00)",
+        domainRef: "bp-4",
+        title: "Domain 4 · Self Service & Automation",
+        weight: "20%",
+        strategy: "Knowledge Management and Service Catalog are high-yield. Understand the catalog item → request → fulfillment flow. Know Workflow Studio triggers and Virtual Agent basics.",
+        topicIds: ["bp-4-1", "bp-4-2", "bp-4-3", "bp-4-4"],
+      },
+      {
+        id: "main-break",
+        time: "Lunch Break",
+        duration: "1 hr (14:00 – 15:00)",
+        domainRef: null,
+        title: "Recharge",
+        weight: null,
+        strategy: "Eat properly. Skim your evening-before notes once while resting — passive reinforcement for D1, D2, D6.",
+        topicIds: [],
+      },
+      {
+        id: "main-3",
+        time: "Afternoon Block",
+        duration: "3 hrs (15:00 – 18:00)",
+        domainRef: "bp-5",
+        title: "Domain 5 · Database Management & Platform Security",
+        weight: "30%",
+        strategy: "The heaviest domain. Give Data Schema and ACLs extra time — they're the most tested. Understand table relationships, coalesce in imports, CMDB class hierarchy, and the Shared Responsibility Model.",
+        topicIds: ["bp-5-1", "bp-5-2", "bp-5-3", "bp-5-4", "bp-5-5", "bp-5-6"],
+      },
+      {
+        id: "main-4",
+        time: "Evening Review",
+        duration: "1.5 hrs (18:30 – 20:00)",
+        domainRef: null,
+        title: "Full Review & Mock Practice",
+        weight: null,
+        strategy: "Run through all 30 topics mentally. Do a mock exam or sample questions. Write down anything shaky on your patch sheet. Focus extra time on Domain 5 and Domain 3 weak spots.",
+        topicIds: [],
+      },
+    ],
+    summary: "By end of day you'll have covered the remaining 70% of the exam. Domain 5 gets the most time because it's worth 30%.",
+  },
+];
+
 const STORAGE_KEY = "csa-blueprint-checklist";
 
 function readChecklist() {
@@ -230,6 +331,99 @@ export default function BlueprintChecklist({ onBack }) {
             Reset all
           </motion.button>
         )}
+      </motion.section>
+
+      {/* Study Plan */}
+      <motion.section className="panel panel--spotlight study-plan-section" variants={cardVariants} custom={1}>
+        <div className="section-heading">
+          <div className="section-heading__eyebrow">Study schedule</div>
+          <div className="section-heading__title">1 Day + 4 Hour Plan</div>
+          <div className="section-heading__detail">
+            Cover the 3 lighter domains (30% of the exam) the evening before, then crush the 3 heavy domains on the main day.
+            Domain 5 gets the biggest block because it's worth 30%.
+          </div>
+        </div>
+
+        <div className="study-plan-timeline">
+          {studyPlan.map((dayPlan) => (
+            <div key={dayPlan.id} className={`study-plan-day study-plan-day--${dayPlan.color}`}>
+              <div className="study-plan-day__header">
+                <div>
+                  <div className="study-plan-day__label">{dayPlan.day}</div>
+                  <div className="study-plan-day__time">{dayPlan.timeLabel}</div>
+                </div>
+                <div className="study-plan-day__topic-count">
+                  {dayPlan.blocks.reduce((s, b) => s + b.topicIds.length, 0)} topics
+                </div>
+              </div>
+
+              <div className="study-plan-blocks">
+                {dayPlan.blocks.map((block) => {
+                  const blockDone = block.topicIds.length > 0 && block.topicIds.every((id) => checked[id]);
+                  const blockStarted = block.topicIds.some((id) => checked[id]);
+                  const blockProgress = block.topicIds.length
+                    ? Math.round((block.topicIds.filter((id) => checked[id]).length / block.topicIds.length) * 100)
+                    : 0;
+
+                  return (
+                    <div
+                      key={block.id}
+                      className={`study-block${blockDone ? " study-block--done" : ""}${!block.domainRef ? " study-block--break" : ""}`}
+                    >
+                      <div className="study-block__header">
+                        <div className="study-block__time-badge">{block.time}</div>
+                        <div className="study-block__duration">{block.duration}</div>
+                      </div>
+
+                      <div className="study-block__body">
+                        <div className="study-block__title">{block.title}</div>
+                        {block.weight && <span className="study-block__weight">{block.weight} of exam</span>}
+                        <p className="study-block__strategy">{block.strategy}</p>
+                      </div>
+
+                      {block.topicIds.length > 0 && (
+                        <div className="study-block__footer">
+                          <div className="study-block__progress-label">
+                            <span>{block.topicIds.filter((id) => checked[id]).length}/{block.topicIds.length} done</span>
+                            <span>{blockProgress}%</span>
+                          </div>
+                          <div className="meter">
+                            <motion.div
+                              className="meter__fill"
+                              animate={{ width: `${blockProgress}%` }}
+                              transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                            />
+                          </div>
+                          <div className="study-block__topics">
+                            {block.topicIds.map((tid) => {
+                              const topic = examBlueprint
+                                .flatMap((d) => d.topics)
+                                .find((t) => t.id === tid);
+                              if (!topic) return null;
+                              return (
+                                <button
+                                  key={tid}
+                                  type="button"
+                                  className={`study-block__topic-chip${checked[tid] ? " study-block__topic-chip--done" : ""}`}
+                                  onClick={() => toggle(tid)}
+                                >
+                                  <span className="study-block__chip-dot" />
+                                  {topic.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="study-plan-day__summary">{dayPlan.summary}</div>
+            </div>
+          ))}
+        </div>
       </motion.section>
 
       {/* Domain cards */}

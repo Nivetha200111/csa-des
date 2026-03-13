@@ -2346,6 +2346,267 @@ button {
   }
 }
 
+/* ── Study Plan ── */
+
+.study-plan-section {
+  display: grid;
+  gap: 24px;
+}
+
+.study-plan-timeline {
+  display: grid;
+  gap: 28px;
+}
+
+.study-plan-day {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.study-plan-day--ice {
+  border-color: rgba(121, 168, 255, 0.2);
+  background:
+    radial-gradient(circle at top left, rgba(121, 168, 255, 0.08), transparent 36%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.study-plan-day--gold {
+  border-color: rgba(248, 200, 95, 0.2);
+  background:
+    radial-gradient(circle at top left, rgba(248, 200, 95, 0.08), transparent 36%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.study-plan-day__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.study-plan-day__label {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.study-plan-day--ice .study-plan-day__label {
+  color: #bed1ff;
+}
+
+.study-plan-day--gold .study-plan-day__label {
+  color: #f9d88e;
+}
+
+.study-plan-day__time {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.study-plan-day__topic-count {
+  border-radius: 999px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted-strong);
+  font-weight: 700;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.study-plan-blocks {
+  display: grid;
+  gap: 14px;
+}
+
+.study-block {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 200ms ease, background 200ms ease;
+}
+
+.study-block--done {
+  border-color: rgba(74, 226, 200, 0.3);
+  background:
+    linear-gradient(135deg, rgba(74, 226, 200, 0.1), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.study-block--break {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.study-block__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.study-block__time-badge {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(248, 200, 95, 0.14), rgba(74, 226, 200, 0.1));
+  border: 1px solid rgba(248, 200, 95, 0.18);
+  color: #f9d88e;
+  font-weight: 700;
+  font-size: 0.84rem;
+  letter-spacing: 0.06em;
+}
+
+.study-block--break .study-block__time-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+  color: var(--muted-strong);
+}
+
+.study-block__duration {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.study-block__body {
+  display: grid;
+  gap: 8px;
+}
+
+.study-block__title {
+  font-family: "Sora", "Space Grotesk", sans-serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.study-block--done .study-block__title {
+  color: var(--muted-strong);
+}
+
+.study-block__weight {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 12px;
+  border: 1px solid rgba(74, 226, 200, 0.16);
+  background: rgba(74, 226, 200, 0.08);
+  color: #bdf7ec;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.study-block__strategy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.study-block__footer {
+  display: grid;
+  gap: 10px;
+}
+
+.study-block__progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted-strong);
+  font-size: 0.86rem;
+}
+
+.study-block__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.study-block__topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: rgba(4, 12, 22, 0.6);
+  color: var(--text);
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 120ms ease;
+}
+
+.study-block__topic-chip:hover {
+  border-color: rgba(74, 226, 200, 0.3);
+  background: rgba(74, 226, 200, 0.06);
+  transform: translateY(-1px);
+}
+
+.study-block__topic-chip--done {
+  border-color: rgba(74, 226, 200, 0.32);
+  background: rgba(74, 226, 200, 0.1);
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.study-block__chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.study-block__topic-chip--done .study-block__chip-dot {
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-mint));
+  box-shadow: 0 0 10px rgba(74, 226, 200, 0.2);
+}
+
+.study-plan-day__summary {
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(4, 12, 22, 0.5);
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .study-plan-day {
+    padding: 16px;
+  }
+
+  .study-block {
+    padding: 16px;
+  }
+
+  .study-plan-day__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .study-block__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── End Study Plan ── */
+
 /* ── End Blueprint Checklist ── */
 
 @media (prefers-reduced-motion: reduce) {
