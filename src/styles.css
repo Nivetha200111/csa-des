@@ -2439,6 +2439,114 @@ button {
   box-shadow: 0 0 8px rgba(251, 208, 0, 0.3);
 }
 
+/* ── Zone Marker (study-block banner on the path) ── */
+
+.mario-zone-marker {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(251, 208, 0, 0.08);
+  border: 2px solid rgba(251, 208, 0, 0.25);
+  flex-shrink: 0;
+  min-width: 72px;
+  text-align: center;
+}
+
+.mario-zone-marker--cleared {
+  border-color: rgba(67, 176, 71, 0.35);
+  background: rgba(67, 176, 71, 0.08);
+}
+
+.mario-zone-marker__flag {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.mario-zone-marker--cleared .mario-zone-marker__flag {
+  color: #7ddf64;
+}
+
+.mario-zone-marker__title {
+  color: var(--mario-yellow);
+  font-size: 0.35rem;
+  line-height: 1.5;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.mario-zone-marker--cleared .mario-zone-marker__title {
+  color: #7ddf64;
+}
+
+.mario-zone-marker__time {
+  color: #888;
+  font-size: 0.3rem;
+}
+
+.mario-zone-marker__progress {
+  color: #aaa;
+  font-size: 0.32rem;
+}
+
+.mario-zone-marker--cleared .mario-zone-marker__progress {
+  color: #7ddf64;
+}
+
+/* ── Rest Stop (workout / review) ── */
+
+.mario-rest-stop {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  text-align: center;
+  min-width: 64px;
+}
+
+.mario-rest-stop--workout {
+  background: rgba(229, 37, 33, 0.08);
+  border: 2px dashed rgba(229, 37, 33, 0.3);
+}
+
+.mario-rest-stop--review {
+  background: rgba(4, 156, 216, 0.08);
+  border: 2px dashed rgba(4, 156, 216, 0.3);
+}
+
+.mario-rest-stop__icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.mario-rest-stop__label {
+  font-size: 0.32rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.mario-rest-stop--workout .mario-rest-stop__label {
+  color: #ff8a88;
+}
+
+.mario-rest-stop--review .mario-rest-stop__label {
+  color: #6ec4e8;
+}
+
+.mario-rest-stop__time {
+  color: #777;
+  font-size: 0.28rem;
+}
+
 /* ── Level Wrapper ── */
 
 .mario-level-wrapper {

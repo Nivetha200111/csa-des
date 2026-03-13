@@ -1,6 +1,8 @@
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+
+/* ── Exam blueprint (kept for topic label + domain lookups) ── */
 
 const examBlueprint = [
   {
@@ -86,34 +88,38 @@ const examBlueprint = [
 /* Topics already finished before the plan starts */
 const preCheckedTopics = ["bp-5-3", "bp-5-4"];
 
+/* ── Study plan (schedule-based: the game is driven by this) ── */
+
 const studyPlan = [
   {
     id: "eve",
     day: "Evening Before",
-    timeLabel: "6:30 PM - Midnight",
+    timeLabel: "6:30 PM – Midnight",
     blocks: [
-      { id: "eve-w", time: "6:30 - 8:00 PM", title: "🏋️ Workout", topicIds: [], isWorkout: true },
-      { id: "eve-1", time: "8:00 - 9:00 PM", title: "Platform & Config Warm-up", topicIds: ["bp-1-1", "bp-2-1", "bp-1-4", "bp-6-1"] },
-      { id: "eve-2", time: "9:10 - 10:10 PM", title: "Instance Behaviour & Logic", topicIds: ["bp-1-3", "bp-2-2", "bp-6-2", "bp-2-3"] },
-      { id: "eve-3", time: "10:20 - 11:20 PM", title: "Capabilities & Migration", topicIds: ["bp-1-2", "bp-6-3", "bp-6-4"] },
-      { id: "eve-4", time: "11:20 PM - 12:00", title: "Evening Review", topicIds: [] },
+      { id: "eve-w", time: "6:30 – 8:00 PM", title: "Workout", topicIds: [], isWorkout: true },
+      { id: "eve-1", time: "8:00 – 9:00 PM", title: "Platform & Config Warm-up", topicIds: ["bp-1-1", "bp-2-1", "bp-1-4", "bp-6-1"] },
+      { id: "eve-2", time: "9:10 – 10:10 PM", title: "Instance Behaviour & Logic", topicIds: ["bp-1-3", "bp-2-2", "bp-6-2", "bp-2-3"] },
+      { id: "eve-3", time: "10:20 – 11:20 PM", title: "Capabilities & Migration", topicIds: ["bp-1-2", "bp-6-3", "bp-6-4"] },
+      { id: "eve-4", time: "11:20 PM – 12:00", title: "Evening Review", topicIds: [] },
     ],
   },
   {
     id: "main",
     day: "Main Day",
-    timeLabel: "9 AM - 8:30 PM",
+    timeLabel: "8 AM – 7:30 PM",
     blocks: [
-      { id: "main-1", time: "9:00 - 10:30", title: "Forms, Lists & Schema", topicIds: ["bp-5-1", "bp-3-1", "bp-3-2", "bp-3-3", "bp-3-4"] },
-      { id: "main-2", time: "10:40 - 12:00", title: "Advanced Config & ACLs", topicIds: ["bp-3-5", "bp-5-2", "bp-3-6", "bp-3-7"] },
-      { id: "main-w", time: "12:00 - 1:30", title: "🏋️ Workout", topicIds: [], isWorkout: true },
-      { id: "main-3", time: "1:30 - 3:30", title: "Self Service & Dashboards", topicIds: ["bp-4-1", "bp-4-2", "bp-3-8", "bp-3-9"] },
-      { id: "main-4", time: "3:45 - 5:45", title: "Automation & Security", topicIds: ["bp-4-3", "bp-4-4", "bp-5-5", "bp-5-6"] },
-      { id: "main-5", time: "6:00 - 6:45", title: "Revisit Imports & CMDB", topicIds: ["bp-5-3", "bp-5-4"] },
-      { id: "main-6", time: "7:00 - 8:30", title: "Final Review & Mock", topicIds: [] },
+      { id: "main-1", time: "8:00 – 9:30", title: "Forms, Lists & Schema", topicIds: ["bp-5-1", "bp-3-1", "bp-3-2", "bp-3-3", "bp-3-4"] },
+      { id: "main-2", time: "9:40 – 11:00", title: "Advanced Config & ACLs", topicIds: ["bp-3-5", "bp-5-2", "bp-3-6", "bp-3-7"] },
+      { id: "main-w", time: "11:00 – 12:30", title: "Workout", topicIds: [], isWorkout: true },
+      { id: "main-3", time: "12:30 – 2:30", title: "Self Service & Dashboards", topicIds: ["bp-4-1", "bp-4-2", "bp-3-8", "bp-3-9"] },
+      { id: "main-4", time: "2:45 – 4:45", title: "Automation & Security", topicIds: ["bp-4-3", "bp-4-4", "bp-5-5", "bp-5-6"] },
+      { id: "main-5", time: "5:00 – 5:45", title: "Revisit Imports & CMDB", topicIds: ["bp-5-3", "bp-5-4"] },
+      { id: "main-6", time: "6:00 – 7:30", title: "Final Review & Mock", topicIds: [] },
     ],
   },
 ];
+
+/* ── Helpers ── */
 
 const STORAGE_KEY = "csa-blueprint-checklist";
 
@@ -180,50 +186,109 @@ const worldVariants = {
   }),
 };
 
+/* ══════════════════════════════════════════
+   Component
+   ══════════════════════════════════════════ */
+
 export default function BlueprintChecklist({ onBack }) {
   const [checked, setChecked] = useState(readChecklist);
   const [showGuide, setShowGuide] = useState(false);
-  const [justCleared, setJustCleared] = useState(null); // world id that was just cleared
+  const [justCleared, setJustCleared] = useState(null);
   const [gameComplete, setGameComplete] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
   }, [checked]);
 
-  const totalTopics = useMemo(() => examBlueprint.reduce((s, d) => s + d.topics.length, 0), []);
+  /* ── Topic lookup map ── */
+  const topicMap = useMemo(() => {
+    const map = {};
+    examBlueprint.forEach((d) =>
+      d.topics.forEach((t) => {
+        map[t.id] = { label: t.label, domain: d.title };
+      })
+    );
+    return map;
+  }, []);
+
+  /* ── Study blocks that carry topics (the "zones") ── */
+  const studyBlocksWithTopics = useMemo(
+    () => studyPlan.flatMap((day) => day.blocks.filter((b) => b.topicIds.length > 0)),
+    []
+  );
+
+  /* ── Totals ── */
+  const totalTopics = useMemo(
+    () => studyPlan.reduce((s, day) => s + day.blocks.reduce((s2, b) => s2 + b.topicIds.length, 0), 0),
+    []
+  );
   const completedTopics = useMemo(() => Object.values(checked).filter(Boolean).length, [checked]);
   const overallPercent = totalTopics ? Math.round((completedTopics / totalTopics) * 100) : 0;
   const score = completedTopics * 1000;
 
-  const domainProgress = useCallback(
-    (domain) => {
-      const done = domain.topics.filter((t) => checked[t.id]).length;
-      return { done, total: domain.topics.length, percent: Math.round((done / domain.topics.length) * 100) };
+  /* ── Day progress ── */
+  const dayProgress = useCallback(
+    (day) => {
+      const allIds = day.blocks.flatMap((b) => b.topicIds);
+      const done = allIds.filter((id) => checked[id]).length;
+      return {
+        done,
+        total: allIds.length,
+        percent: allIds.length ? Math.round((done / allIds.length) * 100) : 0,
+      };
     },
     [checked]
   );
 
-  const completedWorlds = useMemo(
-    () => examBlueprint.filter((d) => domainProgress(d).percent === 100).length,
-    [domainProgress]
+  /* ── Block progress ── */
+  const blockProgress = useCallback(
+    (block) => {
+      if (!block.topicIds.length) return { done: 0, total: 0, percent: 100 };
+      const done = block.topicIds.filter((id) => checked[id]).length;
+      return {
+        done,
+        total: block.topicIds.length,
+        percent: Math.round((done / block.topicIds.length) * 100),
+      };
+    },
+    [checked]
   );
 
+  /* ── Completed worlds (days) ── */
+  const completedWorlds = useMemo(
+    () => studyPlan.filter((day) => dayProgress(day).percent === 100).length,
+    [dayProgress]
+  );
+
+  /* ── Completed zones (study blocks with all topics done) ── */
+  const completedZones = useMemo(
+    () => studyBlocksWithTopics.filter((b) => b.topicIds.every((id) => checked[id])).length,
+    [checked, studyBlocksWithTopics]
+  );
+  const totalZones = studyBlocksWithTopics.length;
+
+  /* ── Current level (first unchecked topic in schedule order) ── */
   const currentLevelId = useMemo(() => {
-    for (const domain of examBlueprint) {
-      for (const topic of domain.topics) {
-        if (!checked[topic.id]) return topic.id;
+    for (const day of studyPlan) {
+      for (const block of day.blocks) {
+        for (const topicId of block.topicIds) {
+          if (!checked[topicId]) return topicId;
+        }
       }
     }
     return null;
   }, [checked]);
 
+  /* ── Current world num ── */
   const currentWorldNum = useMemo(() => {
-    for (let i = 0; i < examBlueprint.length; i++) {
-      if (examBlueprint[i].topics.some((t) => !checked[t.id])) return i + 1;
+    for (let i = 0; i < studyPlan.length; i++) {
+      const allIds = studyPlan[i].blocks.flatMap((b) => b.topicIds);
+      if (allIds.some((id) => !checked[id])) return i + 1;
     }
-    return 6;
+    return studyPlan.length;
   }, [checked]);
 
+  /* ── Toggle ── */
   const toggle = useCallback(
     (topicId, event) => {
       setChecked((prev) => {
@@ -231,7 +296,6 @@ export default function BlueprintChecklist({ onBack }) {
         const next = { ...prev, [topicId]: !wasDone };
 
         if (!wasDone) {
-          // Level cleared!
           const rect = event?.currentTarget?.getBoundingClientRect();
           if (rect) {
             const ox = rect.left / window.innerWidth + rect.width / (2 * window.innerWidth);
@@ -241,18 +305,23 @@ export default function BlueprintChecklist({ onBack }) {
             fireCoinBurst();
           }
 
-          // Check if world is now cleared
-          const domain = examBlueprint.find((d) => d.topics.some((t) => t.id === topicId));
-          if (domain) {
-            const allDone = domain.topics.every((t) => (t.id === topicId ? true : next[t.id]));
+          // Check if a day (world) is now cleared
+          const day = studyPlan.find((d) =>
+            d.blocks.some((b) => b.topicIds.includes(topicId))
+          );
+          if (day) {
+            const allDayIds = day.blocks.flatMap((b) => b.topicIds);
+            const allDone = allDayIds.every((id) =>
+              id === topicId ? true : next[id]
+            );
             if (allDone) {
-              setJustCleared(domain.id);
+              setJustCleared(day.id);
               setTimeout(() => setJustCleared(null), 2500);
               setTimeout(fireWorldClear, 200);
             }
           }
 
-          // Check if ALL topics are now done
+          // Check game complete
           const totalDone = Object.values(next).filter(Boolean).length;
           if (totalDone >= totalTopics) {
             setTimeout(() => {
@@ -268,12 +337,17 @@ export default function BlueprintChecklist({ onBack }) {
     [totalTopics]
   );
 
+  /* ── Reset ── */
   const resetAll = () => {
     const defaults = Object.fromEntries(preCheckedTopics.map((id) => [id, true]));
     setChecked(defaults);
     setGameComplete(false);
     setJustCleared(null);
   };
+
+  /* ══════════════════════════════════════════
+     Render
+     ══════════════════════════════════════════ */
 
   return (
     <motion.main
@@ -300,15 +374,19 @@ export default function BlueprintChecklist({ onBack }) {
         </div>
         <div className="mario-hud__cell">
           <span className="mario-hud__label">COINS</span>
-          <span className="mario-hud__value">{completedTopics}/{totalTopics}</span>
+          <span className="mario-hud__value">
+            {completedTopics}/{totalTopics}
+          </span>
         </div>
         <div className="mario-hud__cell">
           <span className="mario-hud__label">WORLD</span>
           <span className="mario-hud__value">{currentWorldNum}-1</span>
         </div>
         <div className="mario-hud__cell">
-          <span className="mario-hud__label">STARS</span>
-          <span className="mario-hud__value">{completedWorlds}/6</span>
+          <span className="mario-hud__label">ZONES</span>
+          <span className="mario-hud__value">
+            {completedZones}/{totalZones}
+          </span>
         </div>
       </div>
 
@@ -317,7 +395,7 @@ export default function BlueprintChecklist({ onBack }) {
         <div className="mario-title-card__pre">SUPER</div>
         <h1 className="mario-title-card__title">CSA WORLD</h1>
         <p className="mario-title-card__sub">
-          Clear all 30 levels across 6 worlds to earn your ServiceNow CSA
+          Clear all 30 levels across 2 worlds to earn your ServiceNow CSA
         </p>
         <div className="mario-overall-bar">
           <div className="mario-overall-bar__label">
@@ -334,17 +412,18 @@ export default function BlueprintChecklist({ onBack }) {
         </div>
       </motion.section>
 
-      {/* World Map */}
+      {/* ── World Map (schedule-driven) ── */}
       <div className="mario-world-map">
-        {examBlueprint.map((domain, worldIndex) => {
+        {studyPlan.map((day, worldIndex) => {
           const worldNum = worldIndex + 1;
-          const progress = domainProgress(domain);
+          const progress = dayProgress(day);
           const isCleared = progress.percent === 100;
-          const wasJustCleared = justCleared === domain.id;
+          const wasJustCleared = justCleared === day.id;
+          let levelCounter = 0;
 
           return (
             <motion.div
-              key={domain.id}
+              key={day.id}
               className={`mario-world${isCleared ? " mario-world--cleared" : ""}${wasJustCleared ? " mario-world--celebrating" : ""}`}
               variants={worldVariants}
               custom={worldIndex + 1}
@@ -352,8 +431,8 @@ export default function BlueprintChecklist({ onBack }) {
               {/* World Header */}
               <div className="mario-world__banner">
                 <span className="mario-world__number">WORLD {worldNum}</span>
-                <span className="mario-world__name">{domain.title}</span>
-                <span className="mario-world__weight">{domain.weight}%</span>
+                <span className="mario-world__name">{day.day}</span>
+                <span className="mario-world__weight">{day.timeLabel}</span>
                 <span className="mario-world__status">
                   {isCleared ? "CLEAR!" : `${progress.done}/${progress.total}`}
                 </span>
@@ -365,52 +444,104 @@ export default function BlueprintChecklist({ onBack }) {
                   <span>START</span>
                 </div>
 
-                {domain.topics.map((topic, levelIndex) => {
-                  const isDone = checked[topic.id];
-                  const isCurrent = topic.id === currentLevelId;
-                  const levelId = `${worldNum}-${levelIndex + 1}`;
+                {day.blocks.map((block) => {
+                  const bProg = blockProgress(block);
+                  const blockCleared = bProg.percent === 100;
 
-                  return (
-                    <div className="mario-level-group" key={topic.id}>
-                      <div className={`mario-path-segment${isDone || (levelIndex === 0 && progress.done > 0) ? " mario-path-segment--active" : ""}`} />
-                      <div className="mario-level-wrapper">
-                        <AnimatePresence>
-                          {isCurrent && (
-                            <motion.div
-                              className="mario-pointer"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0 }}
-                            >
-                              <span className="mario-pointer__arrow" />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                        <motion.button
-                          type="button"
-                          className={`mario-block${isDone ? " mario-block--done" : ""}${isCurrent ? " mario-block--current" : ""}`}
-                          onClick={(e) => toggle(topic.id, e)}
-                          whileTap={{ scale: 0.85 }}
-                          animate={
-                            isDone
-                              ? { scale: [1, 1.15, 1], transition: { duration: 0.3 } }
-                              : {}
-                          }
-                          title={topic.label}
+                  /* ── Workout / Review rest stops ── */
+                  if (block.isWorkout || block.topicIds.length === 0) {
+                    return (
+                      <div key={block.id} className="mario-level-group">
+                        <div className="mario-path-segment mario-path-segment--active" />
+                        <div
+                          className={`mario-rest-stop${block.isWorkout ? " mario-rest-stop--workout" : " mario-rest-stop--review"}`}
                         >
-                          <span className="mario-block__symbol">
-                            {isDone ? "\u2605" : "?"}
-                          </span>
-                        </motion.button>
-                        <div className="mario-level-id">{levelId}</div>
-                        <div className="mario-level-name">{topic.label}</div>
+                          <div className="mario-rest-stop__icon">
+                            {block.isWorkout ? "🏋️" : "📋"}
+                          </div>
+                          <div className="mario-rest-stop__label">
+                            {block.isWorkout ? "WORKOUT" : block.title.toUpperCase()}
+                          </div>
+                          <div className="mario-rest-stop__time">{block.time}</div>
+                        </div>
                       </div>
-                    </div>
+                    );
+                  }
+
+                  /* ── Study block with topics ── */
+                  return (
+                    <Fragment key={block.id}>
+                      {/* Zone marker (block banner on the path) */}
+                      <div className="mario-path-segment" />
+                      <div
+                        className={`mario-zone-marker${blockCleared ? " mario-zone-marker--cleared" : ""}`}
+                      >
+                        <span className="mario-zone-marker__flag">⚑</span>
+                        <span className="mario-zone-marker__title">{block.title}</span>
+                        <span className="mario-zone-marker__time">{block.time}</span>
+                        <span className="mario-zone-marker__progress">
+                          {bProg.done}/{bProg.total}
+                        </span>
+                      </div>
+
+                      {/* Topic ? blocks */}
+                      {block.topicIds.map((topicId) => {
+                        levelCounter++;
+                        const info = topicMap[topicId];
+                        const isDone = checked[topicId];
+                        const isCurrent = topicId === currentLevelId;
+                        const levelId = `${worldNum}-${levelCounter}`;
+
+                        return (
+                          <div className="mario-level-group" key={topicId}>
+                            <div
+                              className={`mario-path-segment${isDone ? " mario-path-segment--active" : ""}`}
+                            />
+                            <div className="mario-level-wrapper">
+                              <AnimatePresence>
+                                {isCurrent && (
+                                  <motion.div
+                                    className="mario-pointer"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                  >
+                                    <span className="mario-pointer__arrow" />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                              <motion.button
+                                type="button"
+                                className={`mario-block${isDone ? " mario-block--done" : ""}${isCurrent ? " mario-block--current" : ""}`}
+                                onClick={(e) => toggle(topicId, e)}
+                                whileTap={{ scale: 0.85 }}
+                                animate={
+                                  isDone
+                                    ? { scale: [1, 1.15, 1], transition: { duration: 0.3 } }
+                                    : {}
+                                }
+                                title={info?.label || topicId}
+                              >
+                                <span className="mario-block__symbol">
+                                  {isDone ? "\u2605" : "?"}
+                                </span>
+                              </motion.button>
+                              <div className="mario-level-id">{levelId}</div>
+                              <div className="mario-level-name">
+                                {info?.label || topicId}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </Fragment>
                   );
                 })}
 
                 {/* Path to Castle */}
-                <div className={`mario-path-segment${isCleared ? " mario-path-segment--active" : ""}`} />
+                <div
+                  className={`mario-path-segment${isCleared ? " mario-path-segment--active" : ""}`}
+                />
 
                 {/* Castle */}
                 <div className={`mario-castle${isCleared ? " mario-castle--cleared" : ""}`}>
@@ -451,7 +582,7 @@ export default function BlueprintChecklist({ onBack }) {
               </AnimatePresence>
 
               {/* Pipe connector to next world */}
-              {worldIndex < examBlueprint.length - 1 && (
+              {worldIndex < studyPlan.length - 1 && (
                 <div className="mario-pipe">
                   <div className="mario-pipe__lip" />
                   <div className="mario-pipe__shaft" />
@@ -485,7 +616,7 @@ export default function BlueprintChecklist({ onBack }) {
       </AnimatePresence>
 
       {/* Strategy Guide Toggle */}
-      <motion.section className="mario-guide-section" variants={worldVariants} custom={7}>
+      <motion.section className="mario-guide-section" variants={worldVariants} custom={3}>
         <button
           type="button"
           className="mario-guide-toggle"
@@ -522,7 +653,8 @@ export default function BlueprintChecklist({ onBack }) {
                         <span className="mario-guide__block-title">{block.title}</span>
                         {block.topicIds.length > 0 && (
                           <span className="mario-guide__block-progress">
-                            {block.topicIds.filter((id) => checked[id]).length}/{block.topicIds.length}
+                            {block.topicIds.filter((id) => checked[id]).length}/
+                            {block.topicIds.length}
                           </span>
                         )}
                         {block.isWorkout && (
