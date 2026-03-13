@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Press+Start+2P&display=swap");
 
 :root {
   color-scheme: dark;
@@ -2107,507 +2107,877 @@ button {
   }
 }
 
-/* ── Blueprint Checklist Page ── */
+/* ══════════════════════════════════════════════
+   SUPER CSA WORLD — Mario Game Theme
+   ══════════════════════════════════════════════ */
 
-.blueprint-page {
-  gap: 24px;
-}
+.mario-game {
+  --mario-red: #e52521;
+  --mario-blue: #049cd8;
+  --mario-yellow: #fbd000;
+  --mario-green: #43b047;
+  --mario-brown: #8b5e14;
+  --mario-brick: #c84c0c;
+  --mario-gold: #e7a539;
+  --mario-sky: #6b88fe;
+  --mario-dark: #0f0f23;
+  --mario-ground: #6b3a1f;
 
-.blueprint-hero__title {
-  max-width: 18ch;
-  font-size: clamp(3rem, 5vw, 5.4rem);
-  line-height: 0.92;
-  background: linear-gradient(135deg, #ffffff 0%, #f8c85f 35%, #79a8ff 65%, #4ae2c8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.blueprint-hero__stats {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 24px;
+  gap: 32px;
+  font-family: "Press Start 2P", "Space Grotesk", monospace;
+  min-width: 0;
+  image-rendering: auto;
 }
 
-.blueprint-stat {
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.035);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
-  padding: 18px;
+/* ── Clouds ── */
+
+.mario-sky {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.mario-cloud {
+  position: absolute;
+  width: 120px;
+  height: 48px;
+  border-radius: 48px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    30px 0 0 rgba(255, 255, 255, 0.05),
+    -30px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+.mario-cloud--1 { top: 6%; left: 12%; animation: cloud-drift 28s linear infinite; }
+.mario-cloud--2 { top: 14%; left: 58%; width: 90px; height: 36px; animation: cloud-drift 36s linear infinite; }
+.mario-cloud--3 { top: 22%; left: 32%; width: 140px; height: 52px; animation: cloud-drift 32s linear infinite reverse; }
+.mario-cloud--4 { top: 38%; left: 78%; width: 100px; height: 40px; animation: cloud-drift 24s linear infinite; }
+
+@keyframes cloud-drift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-200px); }
+}
+
+/* ── HUD ── */
+
+.mario-hud {
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.88);
+  border: 3px solid #444;
+  border-top-color: #666;
+  border-left-color: #666;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+}
+
+.mario-hud__cell {
   display: grid;
   gap: 6px;
+  text-align: center;
 }
 
-.blueprint-stat__value {
-  font-family: "Sora", "Space Grotesk", sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text);
+.mario-hud__label {
+  color: #aaa;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
 }
 
-.blueprint-stat__label {
-  color: var(--muted);
-  font-size: 0.88rem;
+.mario-hud__value {
+  color: #fff;
+  font-size: 0.72rem;
 }
 
-.blueprint-hero__meter {
-  margin-top: 18px;
-}
+/* ── Title Card ── */
 
-.blueprint-hero__meter-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-  color: var(--muted-strong);
-  font-size: 0.92rem;
-}
-
-.blueprint-reset {
-  margin-top: 14px;
-  border: 1px solid rgba(255, 124, 92, 0.2);
-  border-radius: 999px;
-  padding: 10px 18px;
-  background: rgba(255, 124, 92, 0.08);
-  color: #ff9b85;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  width: fit-content;
-}
-
-.blueprint-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.blueprint-domain-card {
-  display: grid;
-  gap: 18px;
-  align-content: start;
-}
-
-.blueprint-domain-card--done {
-  border-color: rgba(74, 226, 200, 0.28);
-  box-shadow:
-    var(--shadow),
-    0 0 48px rgba(74, 226, 200, 0.06);
-}
-
-.blueprint-domain-card__header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
-}
-
-.blueprint-domain-card__eyebrow {
-  color: rgba(248, 200, 95, 0.92);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.blueprint-domain-card__title {
-  margin: 8px 0 0;
-  font-family: "Sora", "Space Grotesk", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-}
-
-.blueprint-domain-card__weight {
-  white-space: nowrap;
-  border-radius: 999px;
-  padding: 10px 16px;
-  border: 1px solid rgba(74, 226, 200, 0.16);
-  background: rgba(74, 226, 200, 0.08);
-  color: #bdf7ec;
-  font-family: "Sora", "Space Grotesk", sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-
-.blueprint-domain-card__progress {
-  display: grid;
-  gap: 8px;
-}
-
-.blueprint-domain-card__progress-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--muted-strong);
-  font-size: 0.88rem;
-}
-
-.blueprint-topic-list {
-  display: grid;
-  gap: 10px;
-}
-
-.blueprint-topic {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.035);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 16px;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
-  text-align: left;
-  color: var(--text);
-  cursor: pointer;
-  min-width: 0;
-  transition: border-color 180ms ease, background 180ms ease;
-}
-
-.blueprint-topic--done {
-  border-color: rgba(74, 226, 200, 0.26);
+.mario-title-card {
+  position: relative;
+  text-align: center;
+  padding: 40px 24px;
+  border-radius: 12px;
   background:
-    linear-gradient(135deg, rgba(74, 226, 200, 0.12), rgba(255, 255, 255, 0.03)),
-    rgba(255, 255, 255, 0.03);
+    radial-gradient(circle at 50% 30%, rgba(107, 136, 254, 0.2), transparent 50%),
+    rgba(0, 0, 0, 0.6);
+  border: 4px solid var(--mario-brown);
+  border-top-color: #d4a44a;
+  border-left-color: #d4a44a;
+  overflow: hidden;
 }
 
-.blueprint-topic__check {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.04);
-  flex-shrink: 0;
-}
-
-.blueprint-topic__check--done {
-  border-color: rgba(74, 226, 200, 0.56);
-  background: rgba(74, 226, 200, 0.14);
-  box-shadow: 0 0 24px rgba(74, 226, 200, 0.16);
-}
-
-.blueprint-topic__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-mint));
-}
-
-.blueprint-topic__label {
-  font-size: 0.98rem;
-  line-height: 1.4;
-}
-
-.blueprint-topic--done .blueprint-topic__label {
-  color: var(--muted);
-  text-decoration: line-through;
-}
-
-.blueprint-topic__state {
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.blueprint-topic--done .blueprint-topic__state {
-  color: rgba(74, 226, 200, 0.72);
-}
-
-@media (max-width: 980px) {
-  .blueprint-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .blueprint-hero__stats {
-    grid-template-columns: 1fr;
-  }
-
-  .blueprint-domain-card__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 720px) {
-  .blueprint-topic {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .blueprint-topic__state {
-    grid-column: 2;
-  }
-}
-
-/* ── Study Plan ── */
-
-.study-plan-section {
-  display: grid;
-  gap: 24px;
-}
-
-.study-plan-timeline {
-  display: grid;
-  gap: 28px;
-}
-
-.study-plan-day {
-  display: grid;
-  gap: 18px;
-  padding: 22px;
-  border-radius: 28px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.study-plan-day--ice {
-  border-color: rgba(121, 168, 255, 0.2);
+.mario-title-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(121, 168, 255, 0.08), transparent 36%),
-    rgba(255, 255, 255, 0.025);
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.06) 3px, rgba(0, 0, 0, 0.06) 4px);
+  pointer-events: none;
 }
 
-.study-plan-day--gold {
-  border-color: rgba(248, 200, 95, 0.2);
-  background:
-    radial-gradient(circle at top left, rgba(248, 200, 95, 0.08), transparent 36%),
-    rgba(255, 255, 255, 0.025);
+.mario-title-card__pre {
+  color: var(--mario-yellow);
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 8px;
 }
 
-.study-plan-day__header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
+.mario-title-card__title {
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: #fff;
+  text-shadow:
+    4px 4px 0 var(--mario-red),
+    -1px -1px 0 var(--mario-blue);
+  letter-spacing: 0.05em;
 }
 
-.study-plan-day__label {
-  font-family: "Sora", "Space Grotesk", sans-serif;
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-}
-
-.study-plan-day--ice .study-plan-day__label {
-  color: #bed1ff;
-}
-
-.study-plan-day--gold .study-plan-day__label {
-  color: #f9d88e;
-}
-
-.study-plan-day__time {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.study-plan-day__topic-count {
-  border-radius: 999px;
-  padding: 10px 16px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--muted-strong);
-  font-weight: 700;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-
-.study-plan-blocks {
-  display: grid;
-  gap: 14px;
-}
-
-.study-block {
-  display: grid;
-  gap: 14px;
-  padding: 20px;
-  border-radius: 24px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.035);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transition: border-color 200ms ease, background 200ms ease;
-}
-
-.study-block--done {
-  border-color: rgba(74, 226, 200, 0.3);
-  background:
-    linear-gradient(135deg, rgba(74, 226, 200, 0.1), rgba(255, 255, 255, 0.02)),
-    rgba(255, 255, 255, 0.03);
-}
-
-.study-block--break {
-  border-style: dashed;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.study-block__header {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.study-block__time-badge {
-  border-radius: 999px;
-  padding: 8px 14px;
-  background: linear-gradient(135deg, rgba(248, 200, 95, 0.14), rgba(74, 226, 200, 0.1));
-  border: 1px solid rgba(248, 200, 95, 0.18);
-  color: #f9d88e;
-  font-weight: 700;
-  font-size: 0.84rem;
+.mario-title-card__sub {
+  margin: 16px 0 0;
+  color: #bbb;
+  font-size: 0.6rem;
+  line-height: 2;
   letter-spacing: 0.06em;
 }
 
-.study-block--break .study-block__time-badge {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--border);
-  color: var(--muted-strong);
+.mario-overall-bar {
+  margin-top: 24px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.study-block__duration {
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.study-block__body {
-  display: grid;
-  gap: 8px;
-}
-
-.study-block__title {
-  font-family: "Sora", "Space Grotesk", sans-serif;
-  font-size: 1.12rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-
-.study-block--done .study-block__title {
-  color: var(--muted-strong);
-}
-
-.study-block__weight {
-  width: fit-content;
-  border-radius: 999px;
-  padding: 6px 12px;
-  border: 1px solid rgba(74, 226, 200, 0.16);
-  background: rgba(74, 226, 200, 0.08);
-  color: #bdf7ec;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.study-block__strategy {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.94rem;
-  line-height: 1.65;
-}
-
-.study-block__footer {
-  display: grid;
-  gap: 10px;
-}
-
-.study-block__progress-label {
+.mario-overall-bar__label {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  color: var(--muted-strong);
-  font-size: 0.86rem;
+  margin-bottom: 8px;
+  color: #ccc;
+  font-size: 0.5rem;
 }
 
-.study-block__topics {
+.mario-bar {
+  width: 100%;
+  height: 16px;
+  border-radius: 4px;
+  background: #333;
+  border: 2px solid #555;
+  border-bottom-color: #222;
+  border-right-color: #222;
+  overflow: hidden;
+}
+
+.mario-bar__fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--mario-yellow) 0%, var(--mario-gold) 40%, var(--mario-brick) 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  min-width: 0;
+}
+
+/* ── World Map ── */
+
+.mario-world-map {
+  display: grid;
+  gap: 0;
+}
+
+.mario-world {
+  position: relative;
+  padding: 28px 20px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(107, 136, 254, 0.08), transparent 40%),
+    rgba(0, 0, 0, 0.45);
+  border: 3px solid #3a3a4a;
+  border-top-color: #5a5a6a;
+  border-left-color: #5a5a6a;
+}
+
+.mario-world--cleared {
+  border-color: var(--mario-green);
+  border-top-color: #7ddf64;
+  border-left-color: #7ddf64;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(67, 176, 71, 0.08), transparent 40%),
+    rgba(0, 0, 0, 0.4);
+}
+
+.mario-world--celebrating {
+  animation: world-flash 0.4s ease 3;
+}
+
+@keyframes world-flash {
+  0%, 100% { border-color: var(--mario-green); }
+  50% { border-color: var(--mario-yellow); }
+}
+
+/* ── World Banner ── */
+
+.mario-world__banner {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.study-block__topic-chip {
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 9px 14px;
-  background: rgba(4, 12, 22, 0.6);
-  color: var(--text);
-  font-size: 0.86rem;
-  cursor: pointer;
-  transition: border-color 180ms ease, background 180ms ease, transform 120ms ease;
+  gap: 10px 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.1);
 }
 
-.study-block__topic-chip:hover {
-  border-color: rgba(74, 226, 200, 0.3);
-  background: rgba(74, 226, 200, 0.06);
-  transform: translateY(-1px);
+.mario-world__number {
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--mario-red);
+  color: #fff;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
 }
 
-.study-block__topic-chip--done {
-  border-color: rgba(74, 226, 200, 0.32);
-  background: rgba(74, 226, 200, 0.1);
-  color: var(--muted);
-  text-decoration: line-through;
+.mario-world__name {
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.study-block__chip-dot {
-  width: 8px;
-  height: 8px;
+.mario-world__weight {
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--mario-gold);
+  color: var(--mario-dark);
+  font-size: 0.55rem;
+  font-weight: bold;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.mario-world__status {
+  color: #aaa;
+  font-size: 0.5rem;
+}
+
+.mario-world--cleared .mario-world__status {
+  color: #7ddf64;
+}
+
+/* ── Level Path ── */
+
+.mario-world__path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 16px 0;
+  min-height: 140px;
+}
+
+/* Snake pattern: even worlds go right-to-left */
+.mario-world:nth-child(even) .mario-world__path {
+  flex-direction: row-reverse;
+}
+
+.mario-path-start {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
-  transition: background 180ms ease, box-shadow 180ms ease;
 }
 
-.study-block__topic-chip--done .study-block__chip-dot {
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-mint));
-  box-shadow: 0 0 10px rgba(74, 226, 200, 0.2);
+.mario-path-start span {
+  color: #888;
+  font-size: 0.35rem;
 }
 
-.study-plan-day__summary {
-  padding: 16px 18px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(4, 12, 22, 0.5);
-  color: var(--muted);
-  font-size: 0.92rem;
+.mario-level-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mario-path-segment {
+  width: 28px;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0px,
+    rgba(255, 255, 255, 0.15) 6px,
+    transparent 6px,
+    transparent 10px
+  );
+  flex-shrink: 0;
+}
+
+.mario-path-segment--active {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--mario-yellow) 0px,
+    var(--mario-yellow) 6px,
+    transparent 6px,
+    transparent 10px
+  );
+  box-shadow: 0 0 8px rgba(251, 208, 0, 0.3);
+}
+
+/* ── Level Wrapper ── */
+
+.mario-level-wrapper {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── ? Block / Star Block ── */
+
+.mario-block {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  border: 3px solid var(--mario-brown);
+  border-top-color: #f5d794;
+  border-left-color: #f5d794;
+  background: linear-gradient(180deg, #e7a539 0%, #c77726 60%, #a85e10 100%);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  color: var(--mario-brown);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 100ms ease;
+}
+
+.mario-block:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.mario-block__symbol {
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+  line-height: 1;
+}
+
+.mario-block--done {
+  background: linear-gradient(180deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
+  border-color: #b8860b;
+  border-top-color: #ffe66d;
+  border-left-color: #ffe66d;
+  color: #fff;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.mario-block--done .mario-block__symbol {
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.mario-block--current {
+  animation: block-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes block-pulse {
+  0%, 100% { box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(231, 165, 57, 0); }
+  50% { box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 10px rgba(231, 165, 57, 0.25); }
+}
+
+/* ── Level Labels ── */
+
+.mario-level-id {
+  color: #999;
+  font-size: 0.4rem;
+  white-space: nowrap;
+}
+
+.mario-level-name {
+  max-width: 80px;
+  color: #aaa;
+  font-size: 0.35rem;
   line-height: 1.6;
-  font-style: italic;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ── Pointer (current position indicator) ── */
+
+.mario-pointer {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.mario-pointer__arrow {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid var(--mario-red);
+  filter: drop-shadow(0 2px 4px rgba(229, 37, 33, 0.4));
+  animation: pointer-bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes pointer-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ── Castle ── */
+
+.mario-castle {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  margin-left: 4px;
+  opacity: 0.5;
+  transition: opacity 300ms ease;
+}
+
+.mario-castle--cleared {
+  opacity: 1;
+}
+
+.mario-castle__turrets {
+  display: flex;
+  gap: 4px;
+}
+
+.mario-castle__turret {
+  width: 10px;
+  height: 14px;
+  background: #888;
+  border-radius: 2px 2px 0 0;
+  border: 1px solid #666;
+  border-bottom: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.mario-castle--cleared .mario-castle__turret {
+  background: #aaa;
+  border-color: #888;
+}
+
+.mario-castle__body {
+  width: 42px;
+  height: 32px;
+  background: #777;
+  border-radius: 2px;
+  border: 2px solid #555;
+  border-top-color: #999;
+  display: grid;
+  place-items: end center;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mario-castle--cleared .mario-castle__body {
+  background: #999;
+  border-color: #777;
+  border-top-color: #bbb;
+}
+
+.mario-castle__door {
+  width: 12px;
+  height: 16px;
+  background: #333;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid #444;
+  border-bottom: 0;
+  margin-bottom: -1px;
+}
+
+.mario-castle__flag {
+  position: absolute;
+  top: -20px;
+  right: 0;
+}
+
+.mario-castle__flag-star {
+  font-size: 1rem;
+  color: var(--mario-yellow);
+  text-shadow: 0 0 10px rgba(251, 208, 0, 0.5);
+  animation: flag-wave 1s ease-in-out infinite;
+}
+
+@keyframes flag-wave {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* ── Pipe Connector ── */
+
+.mario-pipe {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  margin: -3px auto;
+  width: fit-content;
+  position: relative;
+  z-index: 2;
+}
+
+.mario-pipe__lip {
+  width: 52px;
+  height: 14px;
+  background: linear-gradient(180deg, #5cc960 0%, #3da33f 100%);
+  border-radius: 4px;
+  border: 2px solid #2d7a2f;
+  border-top-color: #7ddf64;
+  border-left-color: #7ddf64;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.mario-pipe__shaft {
+  width: 40px;
+  height: 20px;
+  background: linear-gradient(180deg, #4bb74d 0%, #348a36 100%);
+  border: 2px solid #2d7a2f;
+  border-top: 0;
+  border-radius: 0 0 2px 2px;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ── World Clear Banner ── */
+
+.mario-world-clear {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  z-index: 5;
+  color: var(--mario-yellow);
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  text-shadow: 3px 3px 0 var(--mario-red);
+  letter-spacing: 0.08em;
+}
+
+/* ── Victory Screen ── */
+
+.mario-victory {
+  text-align: center;
+  padding: 48px 24px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(251, 208, 0, 0.12), transparent 50%),
+    rgba(0, 0, 0, 0.7);
+  border: 4px solid var(--mario-yellow);
+  border-top-color: #ffe66d;
+  border-left-color: #ffe66d;
+}
+
+.mario-victory__pre {
+  color: #fff;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+}
+
+.mario-victory__title {
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  color: var(--mario-yellow);
+  text-shadow: 3px 3px 0 var(--mario-red);
+}
+
+.mario-victory__sub {
+  margin: 18px 0 0;
+  color: #ccc;
+  font-size: 0.55rem;
+  line-height: 2;
+}
+
+.mario-victory__score {
+  margin-top: 20px;
+  color: #fff;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+/* ── Strategy Guide ── */
+
+.mario-guide-section {
+  display: grid;
+  gap: 16px;
+}
+
+.mario-guide-toggle {
+  width: 100%;
+  padding: 14px 18px;
+  border: 3px solid #555;
+  border-top-color: #777;
+  border-left-color: #777;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ccc;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.mario-guide-toggle:hover {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+}
+
+.mario-guide {
+  display: grid;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.mario-guide__day {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #444;
+}
+
+.mario-guide__day-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--mario-yellow);
+  font-size: 0.55rem;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.mario-guide__block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mario-guide__block--done {
+  border-color: rgba(67, 176, 71, 0.3);
+  background: rgba(67, 176, 71, 0.06);
+}
+
+.mario-guide__block-time {
+  color: #999;
+  font-size: 0.42rem;
+  min-width: 100px;
+}
+
+.mario-guide__block-title {
+  color: #ddd;
+  font-size: 0.48rem;
+  flex: 1 1 auto;
+}
+
+.mario-guide__block--done .mario-guide__block-title {
+  color: #7ddf64;
+}
+
+.mario-guide__block-progress {
+  color: #888;
+  font-size: 0.42rem;
+}
+
+.mario-guide__block--workout {
+  background: rgba(229, 37, 33, 0.08);
+  border-color: rgba(229, 37, 33, 0.25);
+}
+
+.mario-guide__block--workout .mario-guide__block-title {
+  color: #ff9a98;
+}
+
+.mario-guide__block-workout-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(229, 37, 33, 0.2);
+  border: 1px solid rgba(229, 37, 33, 0.35);
+  color: #ff8a88;
+  font-size: 0.38rem;
+  letter-spacing: 0.06em;
+}
+
+/* ── Controls ── */
+
+.mario-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.mario-btn {
+  padding: 12px 24px;
+  border: 3px solid #555;
+  border-top-color: #777;
+  border-left-color: #777;
+  border-radius: 8px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.5rem;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+
+.mario-btn--reset {
+  background: rgba(229, 37, 33, 0.2);
+  border-color: rgba(229, 37, 33, 0.4);
+  border-top-color: rgba(229, 37, 33, 0.6);
+  border-left-color: rgba(229, 37, 33, 0.6);
+  color: #ff8a88;
+}
+
+.mario-btn--reset:hover {
+  background: rgba(229, 37, 33, 0.3);
+  color: #ffb3b2;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 980px) {
+  .mario-hud {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .mario-world__banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 720px) {
-  .study-plan-day {
-    padding: 16px;
+  .mario-game {
+    gap: 20px;
   }
 
-  .study-block {
-    padding: 16px;
+  .mario-title-card {
+    padding: 28px 16px;
   }
 
-  .study-plan-day__header {
+  .mario-title-card__title {
+    font-size: clamp(1.4rem, 10vw, 2.2rem);
+  }
+
+  .mario-world {
+    padding: 20px 14px;
+  }
+
+  .mario-world__path {
+    gap: 8px 0;
+    justify-content: center;
+  }
+
+  .mario-block {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mario-block__symbol {
+    font-size: 1rem;
+  }
+
+  .mario-path-segment {
+    width: 16px;
+  }
+
+  .mario-path-start {
+    width: 38px;
+    height: 38px;
+  }
+
+  .mario-level-name {
+    max-width: 60px;
+    font-size: 0.3rem;
+  }
+
+  .mario-castle__body {
+    width: 34px;
+    height: 26px;
+  }
+
+  .mario-castle__turret {
+    width: 8px;
+    height: 10px;
+  }
+
+  .mario-guide__day-header {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 4px;
   }
 
-  .study-block__header {
+  .mario-guide__block {
     flex-direction: column;
     align-items: flex-start;
   }
 }
 
-/* ── End Study Plan ── */
+@media (max-width: 480px) {
+  .mario-hud__label {
+    font-size: 0.42rem;
+  }
 
-/* ── End Blueprint Checklist ── */
+  .mario-hud__value {
+    font-size: 0.55rem;
+  }
+
+  .mario-block {
+    width: 38px;
+    height: 38px;
+  }
+
+  .mario-path-segment {
+    width: 10px;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   End SUPER CSA WORLD
+   ══════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
   *,
