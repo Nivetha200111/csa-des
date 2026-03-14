@@ -10,8 +10,9 @@
     "db:migrate": "node server/migrate.js",
     "fetch:questions": "node scripts/fetch-csa-questions.mjs",
     "build": "vite build",
+    "build:prod": "npm run build && npm run db:migrate",
     "preview": "vite preview",
-    "start": "node server/index.js"
+    "start": "NODE_ENV=production node server/index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
