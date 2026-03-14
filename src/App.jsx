@@ -1,8 +1,11 @@
 import confetti from "canvas-confetti";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "./AuthContext";
+import AuthPage from "./AuthPage";
 import BlueprintChecklist from "./BlueprintChecklist";
 import FlashcardsPage from "./FlashcardsPage";
+import useCloudSync from "./useCloudSync";
 import practiceQuestionData from "./data/csaQuestions.json";
 
 const blueprintDomains = [
@@ -948,6 +951,30 @@ function PracticeQuestionCard({ question, state, onSelect, onReveal }) {
 }
 
 export default function App() {
+  const { user, loading, syncing, logout } = useAuth();
+
+  // Cloud sync — auto-saves localStorage changes to server
+  useCloudSync();
+
+  // While checking auth, show a loading spinner
+  if (loading) {
+    return (
+      <div className="auth-loading">
+        <div className="auth-loading__spinner" />
+        <p>Loading your prep data...</p>
+      </div>
+    );
+  }
+
+  // If not logged in, show the auth page
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  return <AppDashboard user={user} syncing={syncing} logout={logout} />;
+}
+
+function AppDashboard({ user, syncing, logout }) {
   const shellRef = useRef(null);
   const previousProgressRef = useRef(null);
   const previousToneRef = useRef(null);
@@ -970,6 +997,19 @@ export default function App() {
     if (window.location.hash === "#blueprint") return "blueprint";
     return "tracker";
   });
+
+  // Listen for cloud progress reload events (after login)
+  const reloadFromStorage = useCallback(() => {
+    setDays(readStorage(storageKeys.days, initialDays, normalizeDays));
+    setSelectedDay(readStorage(storageKeys.selectedDay, 1, normalizeSelectedDay));
+    setScores(readStorage(storageKeys.scores, initialScores, normalizeScores));
+    setSavedNotes(readStorage(storageKeys.notes, [], normalizeNotes));
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("cloud-progress-loaded", reloadFromStorage);
+    return () => window.removeEventListener("cloud-progress-loaded", reloadFromStorage);
+  }, [reloadFromStorage]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -1317,6 +1357,17 @@ export default function App() {
       <div className="ambient ambient--two" />
       <div className="ambient ambient--three" />
       <div className="ambient-grid" />
+
+      <div className="top-bar">
+        <div className="top-bar__user">
+          <span className="top-bar__avatar">{user.name?.charAt(0)?.toUpperCase() || "U"}</span>
+          <span className="top-bar__name">{user.name}</span>
+          {syncing && <span className="top-bar__sync">Syncing...</span>}
+        </div>
+        <button type="button" className="top-bar__logout" onClick={logout}>
+          Sign out
+        </button>
+      </div>
 
       <div className="view-switch">
         <button
