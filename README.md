@@ -24,6 +24,16 @@ npm run dev
 
 - `GET http://localhost:3001/api/health` — returns `database: "connected"` when Neon is reachable.
 
+## Deploy on Vercel
+
+1. Push to GitHub (done). Connect the repo at [vercel.com/new](https://vercel.com/new).
+2. Set **Environment Variables** in the Vercel project:
+   - `DATABASE_URL` — your Neon connection string
+   - `JWT_SECRET` — same secret you use locally
+3. Deploy. The API runs as a serverless function; the frontend is served from `dist/`.
+
+Or from the repo root: `vercel login` then `npx vercel --prod`.
+
 ## Scripts
 
 - `npm run dev` — client (Vite) + server (Express) with watch
