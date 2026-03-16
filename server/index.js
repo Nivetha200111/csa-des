@@ -18,13 +18,27 @@ app.use(express.json({ limit: "2mb" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/progress", progressRoutes);
 
-// Health check
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+// Health check (includes DB ping when DATABASE_URL is set)
+app.get("/api/health", async (_req, res) => {
+  const payload = { status: "ok", timestamp: new Date().toISOString() };
+  if (process.env.DATABASE_URL) {
+    try {
+      const pool = (await import("./db.js")).default;
+      await pool.query("SELECT 1");
+      payload.database = "connected";
+    } catch (err) {
+      payload.database = "error";
+      payload.error = err.message;
+      res.status(503).json(payload);
+      return;
+    }
+  }
+  res.json(payload);
 });
 
-// In production, serve the Vite-built frontend
-if (isProduction) {
+// In production (and not on Vercel), serve the Vite-built frontend
+const isVercel = Boolean(process.env.VERCEL);
+if (isProduction && !isVercel) {
   const distPath = path.join(__dirname, "..", "dist");
   app.use(express.static(distPath));
 
@@ -34,6 +48,11 @@ if (isProduction) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`CSA server running on http://localhost:${PORT}${isProduction ? " (production)" : ""}`);
-});
+// Only listen when running as a standalone server (not on Vercel serverless)
+if (!isVercel) {
+  app.listen(PORT, () => {
+    console.log(`CSA server running on http://localhost:${PORT}${isProduction ? " (production)" : ""}`);
+  });
+}
+
+export default app;

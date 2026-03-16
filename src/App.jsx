@@ -668,11 +668,11 @@ function ProgressRing({
     <div className="progress-ring">
       <svg viewBox="0 0 180 180" className="progress-ring__svg" aria-hidden="true">
         <defs>
-          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f8c85f" />
-            <stop offset="50%" stopColor="#ff7c5c" />
-            <stop offset="100%" stopColor="#4ae2c8" />
-          </linearGradient>
+<linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#6b9d8f" />
+          <stop offset="50%" stopColor="#81B5A1" />
+          <stop offset="100%" stopColor="#9ec9b8" />
+        </linearGradient>
         </defs>
         <circle className="progress-ring__track" cx="90" cy="90" r={radius} />
         <motion.circle

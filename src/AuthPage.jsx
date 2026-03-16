@@ -82,9 +82,9 @@ export default function AuthPage() {
               />
               <defs>
                 <linearGradient id="brandGrad" x1="0" y1="0" x2="40" y2="40">
-                  <stop stopColor="#f8c85f" />
-                  <stop offset="0.5" stopColor="#ff7c5c" />
-                  <stop offset="1" stopColor="#4ae2c8" />
+                  <stop stopColor="#6b9d8f" />
+                  <stop offset="0.5" stopColor="#81B5A1" />
+                  <stop offset="1" stopColor="#9ec9b8" />
                 </linearGradient>
               </defs>
             </svg>
